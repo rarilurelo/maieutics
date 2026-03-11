@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "external_engine": "codex",
+  "question_batch_size": 4,
+  "review_blocking_severities": [
+    "Critical",
+    "Important"
+  ],
+  "shared_perspectives": {
+    "product": {
+      "title": "Product / Value",
+      "goal": "Clarify user value, intended outcome, scope boundaries, and success criteria.",
+      "question_focus": [
+        "Who is this for?",
+        "What outcome matters most?",
+        "What is explicitly out of scope?"
+      ],
+      "review_focus": [
+        "Missing user value",
+        "Scope creep",
+        "Unclear success criteria",
+        "Features not justified by the discovery log"
+      ]
+    },
+    "security": {
+      "title": "Security / Risk",
+      "goal": "Surface trust boundaries, data sensitivity, abuse cases, and unsafe defaults.",
+      "question_focus": [
+        "What data is sensitive?",
+        "What misuse or abuse must be prevented?",
+        "What security constraints are non-negotiable?"
+      ],
+      "review_focus": [
+        "Missing validation or authorization",
+        "Sensitive data mishandling",
+        "Unsafe defaults",
+        "Unreviewed attack surfaces"
+      ]
+    },
+    "maintainability": {
+      "title": "Maintainability / Operations",
+      "goal": "Reduce long-term complexity and avoid brittle or overbuilt solutions.",
+      "question_focus": [
+        "What existing patterns should be preserved?",
+        "What complexity is unacceptable?",
+        "What should stay simple even if less flexible?"
+      ],
+      "review_focus": [
+        "Overengineering",
+        "Hidden coupling",
+        "Missing tests",
+        "Poor operational clarity"
+      ]
+    },
+    "ux": {
+      "title": "UX / Workflow",
+      "goal": "Protect usability, clarity, error recovery, and operator experience.",
+      "question_focus": [
+        "Who interacts with this and how?",
+        "What failure or confusion states matter most?",
+        "What must feel simple from the user's perspective?"
+      ],
+      "review_focus": [
+        "Confusing behavior",
+        "Poor failure handling",
+        "Unclear operator workflow",
+        "Inconsistent UX decisions"
+      ]
+    },
+    "architecture": {
+      "title": "Architecture / Integration",
+      "goal": "Check boundaries, dependencies, data flow, and fit with the existing codebase.",
+      "question_focus": [
+        "Where should this live?",
+        "What existing systems does it touch?",
+        "What architectural constraints already exist?"
+      ],
+      "review_focus": [
+        "Bad boundary placement",
+        "Missing integration detail",
+        "Design-plan mismatch",
+        "Implementation not matching architecture"
+      ]
+    }
+  },
+  "stages": {
+    "brainstorming": {
+      "perspective_ids": [
+        "product",
+        "security",
+        "maintainability",
+        "ux",
+        "architecture"
+      ],
+      "external_engine": "codex"
+    },
+    "design_plan_review": {
+      "perspective_ids": [
+        "product",
+        "security",
+        "maintainability",
+        "ux",
+        "architecture"
+      ],
+      "external_engine": "codex"
+    },
+    "implementation_review": {
+      "perspective_ids": [
+        "product",
+        "security",
+        "maintainability",
+        "ux",
+        "architecture"
+      ],
+      "external_engine": "codex"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "elenchus",
+  "description": "Multi-perspective design and implementation workflow for Claude Code using Socratic questioning and codex-powered reviews",
+  "version": "1.0.0",
+  "author": {
+    "name": ""
+  },
+  "homepage": "",
+  "repository": "",
+  "license": "MIT",
+  "keywords": ["skills", "multi-perspective", "codex", "tdd", "design", "review", "discovery-log"]
+}
