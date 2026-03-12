@@ -1,72 +1,74 @@
 # Elenchus
 
-*Named after the Socratic method of elenchus — reaching truth through disciplined questioning.*
+*ソクラテスの問答法「エレンコス」にちなんで — 規律ある問いかけを通じて真理に到達する手法。*
 
-Elenchus is a multi-perspective design and implementation workflow for Claude Code. It ensures your agent doesn't just jump into writing code — instead, it asks the right questions first, from multiple perspectives, to build the right thing.
+[English version](README.en.md)
 
-## What makes it different
+Elenchus は Claude Code 向けのマルチ視点設計・実装ワークフローです。エージェントがいきなりコードを書き始めるのではなく、まず複数の視点から適切な質問を行い、正しいものを作ることを保証します。
 
-- **Multi-perspective questioning**: Questions are generated from 5 perspectives (Product, Security, Maintainability, UX, Architecture) via `codex exec`, not one-by-one by the main agent
-- **Discovery Log**: Every user answer is recorded in a durable log that becomes the authoritative source of truth for all later stages
-- **Codex-powered reviews**: Design reviews, plan reviews, and implementation reviews are run via `codex exec` — a separate model provides independent assessment
-- **Review loops**: Reviews repeat until no Critical or Important issues remain
+## 特徴
 
-## Prerequisites
+- **マルチ視点の質問生成**: プロダクト、セキュリティ、保守性、UX、アーキテクチャの5つの視点から `codex exec` 経由で質問をバッチ生成（メインエージェントが1つずつ考えるのではなく）
+- **Discovery Log**: ユーザーの回答をすべて永続ログに記録し、以降のすべてのステージの信頼できる情報源とする
+- **Codex によるレビュー**: 設計レビュー、計画レビュー、実装レビューを `codex exec` で実行 — 独立したモデルによる客観的な評価
+- **レビューループ**: Critical または Important な問題がなくなるまでレビューを繰り返す
+
+## 前提条件
 
 - [Claude Code](https://claude.com/claude-code)
-- [Codex CLI](https://github.com/openai/codex) — required for question generation and reviews
+- [Codex CLI](https://github.com/openai/codex) — 質問生成とレビューに必要
 
-## Installation
+## インストール
 
-### Claude Code Plugin
+### Claude Code プラグイン
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/elenchus.git ~/.claude/plugins/elenchus
+# リポジトリをクローン
+git clone https://github.com/rarilurelo/elenchus.git ~/.claude/plugins/elenchus
 ```
 
-### Manual (project-local)
+### 手動（プロジェクトローカル）
 
 ```bash
-# Copy skills to your project
+# skills をプロジェクトにコピー
 cp -r path/to/elenchus/skills/ .claude/skills/
 ```
 
-## The Workflow
+## ワークフロー
 
 ```
 brainstorming → writing-plans → subagent-driven-development → finishing-a-development-branch
 ```
 
-1. **brainstorming** — Generates batched questions via `codex exec` from multiple perspectives. Records all answers in a Discovery Log. Produces an approved Design Doc.
+1. **brainstorming** — `codex exec` で複数視点からバッチ質問を生成。すべての回答を Discovery Log に記録。承認済みの Design Doc を作成。
 
-2. **writing-plans** — Creates bite-sized implementation tasks (2-5 min each) from the design. Reviews the plan via `codex exec` with fix loops. TDD, DRY, YAGNI.
+2. **writing-plans** — 設計から小さな実装タスク（各2〜5分）を作成。`codex exec` でレビューし、修正ループを実行。TDD、DRY、YAGNI の原則に従う。
 
-3. **subagent-driven-development** — Dispatches a fresh Claude Code subagent per task. Two-stage review per task (spec compliance + code quality). Final multi-perspective implementation review via `codex exec`.
+3. **subagent-driven-development** — タスクごとに新しい Claude Code サブエージェントを起動。タスクごとに2段階レビュー（仕様準拠 + コード品質）。最終的に `codex exec` でマルチ視点の実装レビューを実施。
 
-4. **finishing-a-development-branch** — Verifies tests, presents options (merge/PR/keep/discard), cleans up.
+4. **finishing-a-development-branch** — テストを検証し、オプションを提示（マージ/PR/保持/破棄）、クリーンアップ。
 
-## Customization
+## カスタマイズ
 
-### Perspective Config
+### 視点設定
 
-Create `.elenchus/multi-perspective.json` in your project root to customize perspectives, question batch size, and review settings. See `skills/brainstorming/references/multi-perspective.default.json` for the default configuration.
+プロジェクトルートに `.elenchus/multi-perspective.json` を作成して、視点、質問バッチサイズ、レビュー設定をカスタマイズできます。デフォルト設定は `skills/brainstorming/references/multi-perspective.default.json` を参照してください。
 
-## Coexistence with Superpowers
+## Superpowers との共存
 
-Elenchus uses the `elenchus:` namespace and can coexist with the `superpowers` plugin. Both plugins will inject their entry-point skills at session start. Use whichever workflow fits your task.
+Elenchus は `elenchus:` ネームスペースを使用し、`superpowers` プラグインと共存できます。両プラグインともセッション開始時にエントリポイントスキルを注入します。タスクに合ったワークフローを選んでください。
 
-## Skills
+## スキル一覧
 
-| Skill | Purpose |
+| スキル | 用途 |
 |---|---|
-| `brainstorming` | Multi-perspective question generation, Discovery Log, Design Doc |
-| `writing-plans` | Implementation plans with codex-powered review loops |
-| `subagent-driven-development` | Subagent-per-task execution with review gates |
-| `executing-plans` | Separate-session plan execution with human checkpoints |
-| `using-git-worktrees` | Isolated workspace setup |
-| `finishing-a-development-branch` | Branch completion workflow |
+| `brainstorming` | マルチ視点の質問生成、Discovery Log、Design Doc |
+| `writing-plans` | Codex レビューループ付き実装計画 |
+| `subagent-driven-development` | タスクごとのサブエージェント実行とレビューゲート |
+| `executing-plans` | 人間のチェックポイント付き別セッション計画実行 |
+| `using-git-worktrees` | 隔離されたワークスペースのセットアップ |
+| `finishing-a-development-branch` | ブランチ完了ワークフロー |
 
-## License
+## ライセンス
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License — 詳細は [LICENSE](LICENSE) を参照。
