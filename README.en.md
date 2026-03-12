@@ -52,10 +52,6 @@ brainstorming → writing-plans → subagent-driven-development → finishing-a-
 
 Create `.maieutics/multi-perspective.json` in your project root to customize perspectives, question batch size, and review settings. See `skills/brainstorming/references/multi-perspective.default.json` for the default configuration.
 
-## Coexistence with Superpowers
-
-Maieutics uses the `maieutics:` namespace and can coexist with the `superpowers` plugin. Both plugins will inject their entry-point skills at session start. Use whichever workflow fits your task.
-
 ## Skills
 
 | Skill | Purpose |

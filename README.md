@@ -70,10 +70,6 @@ brainstorming → writing-plans → subagent-driven-development → finishing-a-
 
 プロジェクトルートに `.maieutics/multi-perspective.json` を作成して、視点、質問バッチサイズ、レビュー設定をカスタマイズできます。デフォルト設定は `skills/brainstorming/references/multi-perspective.default.json` を参照してください。
 
-## Superpowers との共存
-
-Maieutics は `maieutics:` ネームスペースを使用し、`superpowers` プラグインと共存できます。両プラグインともセッション開始時にエントリポイントスキルを注入します。タスクに合ったワークフローを選んでください。
-
 ## スキル一覧
 
 | スキル | 用途 |
