@@ -25,7 +25,7 @@ You MUST read and use all of these:
 - `docs/plans/YYYY-MM-DD-<topic>-discovery.md`
 - `docs/plans/YYYY-MM-DD-<topic>-design.md`
 - relevant repo/project context
-- `.elenchus/multi-perspective.json` if present, otherwise `../brainstorming/references/multi-perspective.default.json`
+- `.maieutics/multi-perspective.json` if present, otherwise `../brainstorming/references/multi-perspective.default.json`
 
 The discovery log is authoritative. If the design conflicts with it, update the design. Do NOT plan against stale assumptions.
 
@@ -133,7 +133,7 @@ Use `codex exec` so the main Claude Code planning session stays focused. Codex r
    - `[DISCOVERY_LOG_PATH]` → actual path (e.g. `docs/plans/2026-03-10-slack-bot-discovery.md`)
    - `[DESIGN_DOC_PATH]` → actual path (e.g. `docs/plans/2026-03-10-slack-bot-design.md`)
    - `[PLAN_DOC_PATH]` → actual path (e.g. `docs/plans/2026-03-10-slack-bot-plan.md`)
-   - `[PERSPECTIVE_CONFIG_PATH]` → `.elenchus/multi-perspective.json` or the bundled default
+   - `[PERSPECTIVE_CONFIG_PATH]` → `.maieutics/multi-perspective.json` or the bundled default
    - `Project Context Summary` → a short summary of the repo
 3. Parse the returned JSON and act on the result
 

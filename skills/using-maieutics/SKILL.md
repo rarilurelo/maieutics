@@ -1,6 +1,6 @@
 ---
-name: using-elenchus
-description: Use when starting any conversation - establishes how to find and use elenchus skills, requiring Skill tool invocation before ANY response including clarifying questions
+name: using-maieutics
+description: Use when starting any conversation - establishes how to find and use maieutics skills, requiring Skill tool invocation before ANY response including clarifying questions
 ---
 
 <SUBAGENT-STOP>
@@ -17,17 +17,17 @@ This is not negotiable. This is not optional. You cannot rationalize your way ou
 
 ## Instruction Priority
 
-Elenchus skills override default system prompt behavior, but **user instructions always take precedence**:
+Maieutics skills override default system prompt behavior, but **user instructions always take precedence**:
 
 1. **User's explicit instructions** (CLAUDE.md, AGENTS.md, direct requests) — highest priority
-2. **Elenchus skills** — override default system behavior where they conflict
+2. **Maieutics skills** — override default system behavior where they conflict
 3. **Default system prompt** — lowest priority
 
 If CLAUDE.md or AGENTS.md says "don't use TDD" and a skill says "always use TDD," follow the user's instructions. The user is in control.
 
 ## Codex Requirement
 
-Elenchus requires `codex exec` for multi-perspective question generation and reviews. There is no fallback. Ensure the Codex CLI is installed and available in your PATH before using elenchus skills.
+Maieutics requires `codex exec` for multi-perspective question generation and reviews. There is no fallback. Ensure the Codex CLI is installed and available in your PATH before using maieutics skills.
 
 Question generation and design/plan/implementation reviews are executed via `codex exec` — not via subagents. This keeps the main Claude Code session clean and leverages a separate model for independent review.
 
@@ -73,19 +73,19 @@ digraph skill_flow {
 
 ### Core Workflow (in order)
 
-1. **elenchus:brainstorming** — Multi-perspective question generation via `codex exec`. Explores user intent through batched questions from 5 perspectives (Product, Security, Maintainability, UX, Architecture). Produces a Discovery Log and Design Doc.
+1. **maieutics:brainstorming** — Multi-perspective question generation via `codex exec`. Explores user intent through batched questions from 5 perspectives (Product, Security, Maintainability, UX, Architecture). Produces a Discovery Log and Design Doc.
 
-2. **elenchus:writing-plans** — Creates bite-sized implementation plans from approved designs. Reviews plans via `codex exec` with fix loops until no Critical/Important issues remain.
+2. **maieutics:writing-plans** — Creates bite-sized implementation plans from approved designs. Reviews plans via `codex exec` with fix loops until no Critical/Important issues remain.
 
-3. **elenchus:subagent-driven-development** — Executes plans by dispatching fresh implementation workers (Agent tool) per task. Two-stage per-task review (spec compliance + code quality). Final multi-perspective implementation review via `codex exec`.
+3. **maieutics:subagent-driven-development** — Executes plans by dispatching fresh implementation workers (Agent tool) per task. Two-stage per-task review (spec compliance + code quality). Final multi-perspective implementation review via `codex exec`.
 
-4. **elenchus:executing-plans** — Alternative to subagent-driven-development for separate-session execution with human checkpoints between batches.
+4. **maieutics:executing-plans** — Alternative to subagent-driven-development for separate-session execution with human checkpoints between batches.
 
 ### Supporting Skills
 
-5. **elenchus:using-git-worktrees** — Creates isolated git worktrees for feature work. Auto-detects project setup, verifies clean test baseline.
+5. **maieutics:using-git-worktrees** — Creates isolated git worktrees for feature work. Auto-detects project setup, verifies clean test baseline.
 
-6. **elenchus:finishing-a-development-branch** — Guides branch completion: verify tests, present 4 options (merge/PR/keep/discard), execute chosen workflow, clean up worktree.
+6. **maieutics:finishing-a-development-branch** — Guides branch completion: verify tests, present 4 options (merge/PR/keep/discard), execute chosen workflow, clean up worktree.
 
 ### Typical Flow
 

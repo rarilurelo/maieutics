@@ -23,7 +23,7 @@ Before executing any task, identify and keep track of:
 - `docs/plans/YYYY-MM-DD-<topic>-discovery.md`
 - `docs/plans/YYYY-MM-DD-<topic>-design.md`
 - `docs/plans/YYYY-MM-DD-<topic>-plan.md`
-- Perspective config: `.elenchus/multi-perspective.json` if present, otherwise `../brainstorming/references/multi-perspective.default.json`
+- Perspective config: `.maieutics/multi-perspective.json` if present, otherwise `../brainstorming/references/multi-perspective.default.json`
 
 The discovery log and user answers are authoritative. If the plan later proves inconsistent with them, update the plan and implement against the corrected version.
 
@@ -77,7 +77,7 @@ After all plan tasks are complete:
    - `[DISCOVERY_LOG_PATH]` → actual path to the discovery log
    - `[DESIGN_DOC_PATH]` → actual path to the design doc
    - `[PLAN_DOC_PATH]` → actual path to the plan doc
-   - `[PERSPECTIVE_CONFIG_PATH]` → `.elenchus/multi-perspective.json` or the bundled default
+   - `[PERSPECTIVE_CONFIG_PATH]` → `.maieutics/multi-perspective.json` or the bundled default
    - `Accumulated Discoveries` → bullet list of durable discoveries from task workers
    - `Current Implementation State` → branch context, diff summary, test results
 3. Parse the returned JSON and act on the result

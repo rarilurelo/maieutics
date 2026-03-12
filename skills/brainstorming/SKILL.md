@@ -24,7 +24,7 @@ Every project goes through this process. A todo list, a single-function utility,
 ## Authoritative Inputs and Artifacts
 
 **Project-local perspective config:**
-- Prefer `.elenchus/multi-perspective.json` if it exists
+- Prefer `.maieutics/multi-perspective.json` if it exists
 - Otherwise use [references/multi-perspective.default.json](references/multi-perspective.default.json)
 
 **Discovery log:**
@@ -70,7 +70,7 @@ Preferred pattern:
 1. Main session ensures the discovery log is saved to disk with the latest user answers
 2. Main session runs `codex exec` with the prompt from [question-generator-prompt.md](question-generator-prompt.md), substituting:
    - `[DISCOVERY_LOG_PATH]` → actual path to the discovery log (e.g. `docs/plans/2026-03-10-slack-bot-discovery.md`)
-   - `[PERSPECTIVE_CONFIG_PATH]` → `.elenchus/multi-perspective.json` or the bundled default
+   - `[PERSPECTIVE_CONFIG_PATH]` → `.maieutics/multi-perspective.json` or the bundled default
    - `Project Context Summary` → a short summary of the repo (tech stack, structure, relevant constraints)
 3. Codex reads the files, generates questions, and returns **only structured JSON output**
 4. Main session parses the JSON, asks the user the question batch, and records the answers in the discovery log

@@ -2,7 +2,7 @@
 
 **Date:** [YYYY-MM-DD]  
 **Topic Slug:** [topic-slug]  
-**Perspective Config:** [.elenchus/multi-perspective.json or bundled default]  
+**Perspective Config:** [.maieutics/multi-perspective.json or bundled default]  
 **External Engine:** codex
 **Status:** [questioning | ready-for-design | superseded]
 

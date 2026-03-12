@@ -1,8 +1,8 @@
-# Elenchus
+# Maieutics
 
-*Named after the Socratic method of elenchus — reaching truth through disciplined questioning.*
+*Named after the Socratic method of maieutics — reaching truth through disciplined questioning.*
 
-Elenchus is a multi-perspective design and implementation workflow for Claude Code. It ensures your agent doesn't just jump into writing code — instead, it asks the right questions first, from multiple perspectives, to build the right thing.
+Maieutics is a multi-perspective design and implementation workflow for Claude Code. It ensures your agent doesn't just jump into writing code — instead, it asks the right questions first, from multiple perspectives, to build the right thing.
 
 ## What makes it different
 
@@ -22,14 +22,14 @@ Elenchus is a multi-perspective design and implementation workflow for Claude Co
 
 ```bash
 # Clone the repository
-git clone https://github.com/rarilurelo/elenchus.git ~/.claude/plugins/elenchus
+git clone https://github.com/rarilurelo/maieutics.git ~/.claude/plugins/maieutics
 ```
 
 ### Manual (project-local)
 
 ```bash
 # Copy skills to your project
-cp -r path/to/elenchus/skills/ .claude/skills/
+cp -r path/to/maieutics/skills/ .claude/skills/
 ```
 
 ## The Workflow
@@ -50,11 +50,11 @@ brainstorming → writing-plans → subagent-driven-development → finishing-a-
 
 ### Perspective Config
 
-Create `.elenchus/multi-perspective.json` in your project root to customize perspectives, question batch size, and review settings. See `skills/brainstorming/references/multi-perspective.default.json` for the default configuration.
+Create `.maieutics/multi-perspective.json` in your project root to customize perspectives, question batch size, and review settings. See `skills/brainstorming/references/multi-perspective.default.json` for the default configuration.
 
 ## Coexistence with Superpowers
 
-Elenchus uses the `elenchus:` namespace and can coexist with the `superpowers` plugin. Both plugins will inject their entry-point skills at session start. Use whichever workflow fits your task.
+Maieutics uses the `maieutics:` namespace and can coexist with the `superpowers` plugin. Both plugins will inject their entry-point skills at session start. Use whichever workflow fits your task.
 
 ## Skills
 

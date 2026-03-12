@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SessionStart hook for elenchus plugin
+# SessionStart hook for maieutics plugin
 
 set -euo pipefail
 
@@ -7,8 +7,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-# Read using-elenchus content
-using_elenchus_content=$(cat "${PLUGIN_ROOT}/skills/using-elenchus/SKILL.md" 2>&1 || echo "Error reading using-elenchus skill")
+# Read using-maieutics content
+using_maieutics_content=$(cat "${PLUGIN_ROOT}/skills/using-maieutics/SKILL.md" 2>&1 || echo "Error reading using-maieutics skill")
 
 # Escape string for JSON embedding using bash parameter substitution.
 escape_for_json() {
@@ -21,8 +21,8 @@ escape_for_json() {
     printf '%s' "$s"
 }
 
-using_elenchus_escaped=$(escape_for_json "$using_elenchus_content")
-session_context="<EXTREMELY_IMPORTANT>\nYou have elenchus.\n\n**Below is the full content of your 'elenchus:using-elenchus' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_elenchus_escaped}\n</EXTREMELY_IMPORTANT>"
+using_maieutics_escaped=$(escape_for_json "$using_maieutics_content")
+session_context="<EXTREMELY_IMPORTANT>\nYou have maieutics.\n\n**Below is the full content of your 'maieutics:using-maieutics' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_maieutics_escaped}\n</EXTREMELY_IMPORTANT>"
 
 # Output context injection as JSON.
 # Keep both shapes for compatibility:

@@ -43,7 +43,7 @@ If no directory exists and no CLAUDE.md preference:
 No worktree directory found. Where should I create worktrees?
 
 1. .worktrees/ (project-local, hidden)
-2. ~/.config/elenchus/worktrees/<project-name>/ (global location)
+2. ~/.config/maieutics/worktrees/<project-name>/ (global location)
 
 Which would you prefer?
 ```
@@ -68,7 +68,7 @@ Per Jesse's rule "Fix broken things immediately":
 
 **Why critical:** Prevents accidentally committing worktree contents to repository.
 
-### For Global Directory (~/.config/elenchus/worktrees)
+### For Global Directory (~/.config/maieutics/worktrees)
 
 No .gitignore verification needed - outside project entirely.
 
@@ -88,8 +88,8 @@ case $LOCATION in
   .worktrees|worktrees)
     path="$LOCATION/$BRANCH_NAME"
     ;;
-  ~/.config/elenchus/worktrees/*)
-    path="~/.config/elenchus/worktrees/$project/$BRANCH_NAME"
+  ~/.config/maieutics/worktrees/*)
+    path="~/.config/maieutics/worktrees/$project/$BRANCH_NAME"
     ;;
 esac
 
