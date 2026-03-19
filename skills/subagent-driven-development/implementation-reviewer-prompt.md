@@ -2,6 +2,14 @@
 
 Run this prompt via `codex exec`. Codex reads the referenced files directly from the working directory.
 
+```bash
+codex exec --full-auto -s read-only -o /tmp/maieutics-impl-review.json - <<'PROMPT'
+<paste the prompt below with [PLACEHOLDERS] substituted>
+PROMPT
+```
+
+Parse the JSON from the `-o` output file, not from stdout.
+
 This reviewer **reviews only**. It does not edit code. It determines whether the implementation is aligned enough to finish the branch, whether more implementation work is required, or whether the human must answer grouped blocker questions.
 
 ````text

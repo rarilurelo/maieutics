@@ -76,6 +76,21 @@ Preferred pattern:
 3. Codex reads the files, generates questions, and returns **only structured JSON output**
 4. Main session parses the JSON, asks the user the question batch, and records the answers in the discovery log
 
+#### Exact Command
+
+```bash
+codex exec --full-auto -s read-only -o /tmp/maieutics-questions.json - <<'PROMPT'
+<substituted prompt content from question-generator-prompt.md>
+PROMPT
+```
+
+- `--full-auto` — non-interactive execution with sandboxed auto-approval
+- `-s read-only` — Codex only reads files and generates output, never writes
+- `-o /tmp/maieutics-questions.json` — saves the last message to a file for reliable parsing
+- `-` — read prompt from stdin (use heredoc)
+
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs).
+
 ### Rules for Question Batches
 
 - Ask **3-5 questions per round**; default to **4**

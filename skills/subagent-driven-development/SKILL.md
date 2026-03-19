@@ -82,6 +82,21 @@ After all plan tasks are complete:
    - `Current Implementation State` → branch context, diff summary, test results
 3. Parse the returned JSON and act on the result
 
+#### Exact Command
+
+```bash
+codex exec --full-auto -s read-only -o /tmp/maieutics-impl-review.json - <<'PROMPT'
+<substituted prompt content from implementation-reviewer-prompt.md>
+PROMPT
+```
+
+- `--full-auto` — non-interactive execution with sandboxed auto-approval
+- `-s read-only` — reviewer only reads files, never writes
+- `-o /tmp/maieutics-impl-review.json` — saves the last message for reliable parsing
+- `-` — read prompt from stdin (use heredoc)
+
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs).
+
 ### Final Review Outcomes
 
 **If status is `approved`:**

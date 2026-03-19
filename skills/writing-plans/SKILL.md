@@ -137,6 +137,21 @@ Use `codex exec` so the main Claude Code planning session stays focused. Codex r
    - `Project Context Summary` → a short summary of the repo
 3. Parse the returned JSON and act on the result
 
+#### Exact Command
+
+```bash
+codex exec --full-auto -s read-only -o /tmp/maieutics-review.json - <<'PROMPT'
+<substituted prompt content from design-plan-reviewer-prompt.md>
+PROMPT
+```
+
+- `--full-auto` — non-interactive execution with sandboxed auto-approval
+- `-s read-only` — reviewer only reads files, never writes
+- `-o /tmp/maieutics-review.json` — saves the last message for reliable parsing
+- `-` — read prompt from stdin (use heredoc)
+
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs).
+
 ### Review Outcomes
 
 **If status is `approved`:**

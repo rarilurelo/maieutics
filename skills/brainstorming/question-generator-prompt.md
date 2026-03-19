@@ -2,6 +2,14 @@
 
 Run this prompt via `codex exec`. Codex reads the referenced files directly from the working directory.
 
+```bash
+codex exec --full-auto -s read-only -o /tmp/maieutics-questions.json - <<'PROMPT'
+<paste the prompt below with [PLACEHOLDERS] substituted>
+PROMPT
+```
+
+Parse the JSON from the `-o` output file, not from stdout.
+
 Your job is **question generation only**. You do not design the solution. You do not write a plan. You do not implement anything.
 
 ````text
