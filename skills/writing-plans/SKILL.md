@@ -152,6 +152,17 @@ PROMPT
 
 Parse the output from the `-o` file, not from stdout (stdout contains progress logs).
 
+### Review Loop Limit
+
+The review loop runs **at most 3 rounds**. If Critical or Important issues remain after 3 rounds, stop self-fixing and escalate to the user:
+
+- Present the unresolved issues clearly
+- Ask the user for direction on each remaining issue
+- Append answers to the discovery log
+- Apply the user's decisions, then run one final review
+
+This prevents infinite fix loops where each fix introduces new issues.
+
 ### Review Outcomes
 
 **If status is `approved`:**
@@ -160,7 +171,7 @@ Parse the output from the `-o` file, not from stdout (stdout contains progress l
 **If status is `needs-fix`:**
 - Fix the design and/or plan yourself
 - Append the review round to the review log
-- Re-run the external review
+- Re-run the external review (respecting the 3-round limit)
 
 **If status is `needs-user-input`:**
 - Ask the user the grouped blocker questions

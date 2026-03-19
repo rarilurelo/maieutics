@@ -53,7 +53,11 @@ For each selected perspective, check:
 - Minor: Good to improve, but does not block completion
 
 ## Human Escalation Rule
-Set status to "needs-user-input" only when the blockers cannot be resolved from the existing discovery log, design, plan, implementation, and repo context.
+Set status to "needs-user-input" when ANY of the following are true:
+- The blockers cannot be resolved from the existing discovery log, design, plan, implementation, and repo context
+- The issue involves a tradeoff or judgment call where reasonable people could disagree
+- The same issue (or a closely related one) was already flagged in a previous review round but remains unresolved
+- Fixing the issue would materially change the scope, architecture, or user-facing behavior beyond what was explicitly approved
 
 ## Output
 Return JSON inside one fenced code block and nothing else.
