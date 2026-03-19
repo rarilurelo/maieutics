@@ -56,8 +56,9 @@ You MUST create a task for each of these items and complete them in order:
 7. **Repeat until ready for design** — continue question rounds until the external question generator says the design can be written, or until only human-decided tradeoffs remain
 8. **Propose 2-3 approaches** — with trade-offs and your recommendation
 9. **Present design** — in sections scaled to complexity, get user approval after each section
-10. **Write design doc** — save to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit
-11. **Transition to implementation planning** — invoke `writing-plans`
+10. **Create isolated workspace** — invoke `using-git-worktrees` to create a feature branch before committing any artifacts
+11. **Write design doc** — save to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit (now on the feature branch)
+12. **Transition to implementation planning** — invoke `writing-plans`
 
 ## Multi-Perspective Question Generation
 
@@ -121,15 +122,22 @@ If the user changes an answer during design review, append that change to the di
 
 ## After the Design
 
+### Workspace Setup
+
+After the design is approved, create an isolated workspace **before** committing any artifacts:
+
+- Invoke `using-git-worktrees` to create a feature branch and worktree
+- All subsequent commits (design doc, discovery log, plan, etc.) go on the feature branch
+
 ### Documentation
 
 - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
 - Keep a durable discovery log at `docs/plans/YYYY-MM-DD-<topic>-discovery.md`
-- Commit both files to git
+- Commit both files to git (on the feature branch)
 
 ### Implementation Planning
 
-After the design is approved:
+After documentation is committed:
 
 - Invoke `writing-plans`
 - Do NOT invoke any implementation skill directly from brainstorming

@@ -90,7 +90,7 @@ digraph skill_flow {
 ### Typical Flow
 
 ```
-brainstorming → writing-plans → using-git-worktrees → subagent-driven-development → finishing-a-development-branch
+brainstorming → using-git-worktrees → writing-plans → subagent-driven-development → finishing-a-development-branch
 ```
 
 ## Skill Priority
