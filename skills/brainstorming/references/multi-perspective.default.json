@@ -113,6 +113,16 @@
         "architecture"
       ],
       "external_engine": "codex"
+    },
+    "feedback_reconciliation": {
+      "perspective_ids": [
+        "product",
+        "security",
+        "maintainability",
+        "ux",
+        "architecture"
+      ],
+      "external_engine": "codex"
     }
   }
 }

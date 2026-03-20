@@ -87,10 +87,17 @@ digraph skill_flow {
 
 6. **maieutics:finishing-a-development-branch** — Guides branch completion: verify tests, present 4 options (merge/PR/keep/discard), execute chosen workflow, clean up worktree.
 
+### Feedback Loop
+
+7. **maieutics:reconciling-feedback** — Triages external feedback (staging tests, UAT, code review, bug reports) by classifying each item across 5 perspectives via `codex exec`. Promotes accepted changes to the Discovery Log and routes to the appropriate pipeline stage (brainstorming for scope changes, writing-plans for design/implementation fixes).
+
 ### Typical Flow
 
 ```
 brainstorming → using-git-worktrees → writing-plans → subagent-driven-development → finishing-a-development-branch
+     ^                                       ^                                                |
+     |                                       |                                                v
+     +-------------- reconciling-feedback ---+------------------------------- (external feedback arrives)
 ```
 
 ## Skill Priority
