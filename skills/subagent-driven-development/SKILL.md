@@ -85,17 +85,19 @@ After all plan tasks are complete:
 #### Exact Command
 
 ```bash
-codex exec --full-auto -s read-only -o /tmp/maieutics-impl-review.json - <<'PROMPT'
+RUN_ID=$(uuidgen)
+codex exec --full-auto -s read-only -o /tmp/maieutics-impl-review-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from implementation-reviewer-prompt.md>
 PROMPT
 ```
 
+- `RUN_ID=$(uuidgen)` — generates a unique ID per invocation to avoid stale file collisions across sessions
 - `--full-auto` — non-interactive execution with sandboxed auto-approval
 - `-s read-only` — reviewer only reads files, never writes
-- `-o /tmp/maieutics-impl-review.json` — saves the last message for reliable parsing
+- `-o /tmp/maieutics-impl-review-${RUN_ID}.json` — saves the last message to a uniquely-named file for reliable parsing
 - `-` — read prompt from stdin (use heredoc)
 
-Parse the output from the `-o` file, not from stdout (stdout contains progress logs).
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs). Generate a new `RUN_ID` for each invocation (including retries and subsequent review rounds).
 
 ### Review Loop Limit
 

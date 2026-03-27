@@ -3,12 +3,13 @@
 Run this prompt via `codex exec`. Codex reads the referenced files directly from the working directory.
 
 ```bash
-codex exec --full-auto -s read-only -o /tmp/maieutics-review.json - <<'PROMPT'
+RUN_ID=$(uuidgen)
+codex exec --full-auto -s read-only -o /tmp/maieutics-review-${RUN_ID}.json - <<'PROMPT'
 <paste the prompt below with [PLACEHOLDERS] substituted>
 PROMPT
 ```
 
-Parse the JSON from the `-o` output file, not from stdout.
+Parse the JSON from the `-o` output file (`/tmp/maieutics-review-${RUN_ID}.json`), not from stdout. Generate a new `RUN_ID` for each invocation.
 
 This reviewer **reviews only**. It does not rewrite files. It does not fix the plan. It tells the main controller what is wrong, how severe it is, and whether the human must be asked.
 

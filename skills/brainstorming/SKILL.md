@@ -79,17 +79,19 @@ Preferred pattern:
 #### Exact Command
 
 ```bash
-codex exec --full-auto -s read-only -o /tmp/maieutics-questions.json - <<'PROMPT'
+RUN_ID=$(uuidgen)
+codex exec --full-auto -s read-only -o /tmp/maieutics-questions-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from question-generator-prompt.md>
 PROMPT
 ```
 
+- `RUN_ID=$(uuidgen)` — generates a unique ID per invocation to avoid stale file collisions across sessions
 - `--full-auto` — non-interactive execution with sandboxed auto-approval
 - `-s read-only` — Codex only reads files and generates output, never writes
-- `-o /tmp/maieutics-questions.json` — saves the last message to a file for reliable parsing
+- `-o /tmp/maieutics-questions-${RUN_ID}.json` — saves the last message to a uniquely-named file for reliable parsing
 - `-` — read prompt from stdin (use heredoc)
 
-Parse the output from the `-o` file, not from stdout (stdout contains progress logs).
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs). Generate a new `RUN_ID` for each invocation (including retries and subsequent rounds).
 
 ### Rules for Question Batches
 
