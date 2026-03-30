@@ -49,14 +49,14 @@ You MUST create a task for each of these items and complete them in order:
 
 1. **Explore project context** — check files, docs, recent commits
 2. **Load perspective config** — use project-local config if present, otherwise the bundled default
-3. **Create or update discovery log** — save the user's raw input verbatim before asking more questions
-4. **Generate next question batch via codex exec** — use [question-generator-prompt.md](question-generator-prompt.md), passing file paths to the discovery log and perspective config
-5. **Ask the user a grouped batch of questions** — ask 3-5 questions in one message (default: 4)
-6. **Record answers verbatim** — append each question and answer to the discovery log
-7. **Repeat until ready for design** — continue question rounds until the external question generator says the design can be written, or until only human-decided tradeoffs remain
-8. **Propose 2-3 approaches** — with trade-offs and your recommendation
-9. **Present design** — in sections scaled to complexity, get user approval after each section
-10. **Create isolated workspace** — invoke `using-git-worktrees` to create a feature branch before committing any artifacts
+3. **Create isolated workspace** — invoke `using-git-worktrees` to create a feature branch. Use the user's initial topic/request to derive the branch name. All subsequent artifacts (discovery log, design doc, etc.) are committed on this feature branch, never on main.
+4. **Create or update discovery log** — save the user's raw input verbatim before asking more questions
+5. **Generate next question batch via codex exec** — use [question-generator-prompt.md](question-generator-prompt.md), passing file paths to the discovery log and perspective config
+6. **Ask the user a grouped batch of questions** — ask 3-5 questions in one message (default: 4)
+7. **Record answers verbatim** — append each question and answer to the discovery log
+8. **Repeat until ready for design** — continue question rounds until the external question generator says the design can be written, or until only human-decided tradeoffs remain
+9. **Propose 2-3 approaches** — with trade-offs and your recommendation
+10. **Present design** — in sections scaled to complexity, get user approval after each section
 11. **Write design doc** — save to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit (now on the feature branch)
 12. **Transition to implementation planning** — invoke `writing-plans`
 
@@ -138,13 +138,6 @@ Once you believe you understand what you're building:
 If the user changes an answer during design review, append that change to the discovery log and revise the design accordingly.
 
 ## After the Design
-
-### Workspace Setup
-
-After the design is approved, create an isolated workspace **before** committing any artifacts:
-
-- Invoke `using-git-worktrees` to create a feature branch and worktree
-- All subsequent commits (design doc, discovery log, plan, etc.) go on the feature branch
 
 ### Documentation
 

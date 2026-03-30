@@ -209,7 +209,7 @@ Ready to implement auth feature
 ## Integration
 
 **Called by:**
-- **brainstorming** — REQUIRED after design approval, before committing any artifacts (design doc, discovery log)
+- **brainstorming** (step 3) — REQUIRED at the start of brainstorming, before creating the discovery log or any other artifacts. This ensures all brainstorming artifacts live on the feature branch, never on main.
 - Any skill needing isolated workspace
 
 **Pairs with:**
