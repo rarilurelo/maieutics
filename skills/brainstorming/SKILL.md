@@ -52,8 +52,13 @@ You MUST create a task for each of these items and complete them in order:
 3. **Create isolated workspace** — invoke `using-git-worktrees` to create a feature branch. Use the user's initial topic/request to derive the branch name. All subsequent artifacts (discovery log, design doc, etc.) are committed on this feature branch, never on main.
 4. **Create or update discovery log** — save the user's raw input verbatim before asking more questions
 5. **Generate next question batch via codex exec** — use [question-generator-prompt.md](question-generator-prompt.md), passing file paths to the discovery log and perspective config
-6. **Ask the user a grouped batch of questions** — ask 3-5 questions in one message (default: 4)
-7. **Record answers verbatim** — append each question and answer to the discovery log
+6. **Ask the user a grouped batch of questions** — ask 3-5 questions in one message (default: 4). **Do NOT pass Codex's question text through as-is.** Rewrite each question for the user following these rules:
+   - **Plain-language rewrite**: Rephrase the question so that a non-engineer stakeholder can understand it. If the original uses jargon (e.g. "idempotency", "eventual consistency", "trust boundary"), keep the term but add a short inline explanation in parentheses.
+   - **Context bridge**: Add one sentence explaining *why this question came up now* — connect it to the user's earlier answers or the current state of the discovery log.
+   - **Expanded choices**: When `suggested_choices` exist, present each choice with a brief pros/cons note or concrete example so the user can make an informed pick.
+   - **`why_it_matters` integration**: Weave the `why_it_matters` value naturally into the question or present it as a short "This matters because …" line below the question — do not drop it silently.
+   - **Preserve intent**: The rewritten question must ask for the same information Codex requested. Do not narrow, broaden, or redirect the question's scope.
+7. **Record answers verbatim** — append each question (both the original Codex question and the rewritten version) and the user's answer to the discovery log
 8. **Repeat until ready for design** — continue question rounds until the external question generator says the design can be written, or until only human-decided tradeoffs remain
 9. **Propose 2-3 approaches** — with trade-offs and your recommendation
 10. **Present design** — in sections scaled to complexity, get user approval after each section
@@ -78,11 +83,13 @@ Preferred pattern:
 
 #### Exact Command
 
+**IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
+
 ```bash
-RUN_ID=$(uuidgen)
-codex exec --full-auto -s read-only -o /tmp/maieutics-questions-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-questions-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from question-generator-prompt.md>
 PROMPT
+echo "OUTPUT_FILE=/tmp/maieutics-questions-${RUN_ID}.json"
 ```
 
 - `RUN_ID=$(uuidgen)` — generates a unique ID per invocation to avoid stale file collisions across sessions
@@ -92,6 +99,8 @@ PROMPT
 - `-` — read prompt from stdin (use heredoc)
 
 Parse the output from the `-o` file, not from stdout (stdout contains progress logs). Generate a new `RUN_ID` for each invocation (including retries and subsequent rounds).
+
+**NEVER use glob patterns (e.g. `ls /tmp/maieutics-questions-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
 
 ### Rules for Question Batches
 

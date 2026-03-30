@@ -2,14 +2,16 @@
 
 Run this prompt via `codex exec`. Codex reads the referenced files directly from the working directory.
 
+**Run in the foreground (do NOT use `run_in_background`):**
+
 ```bash
-RUN_ID=$(uuidgen)
-codex exec --full-auto -s read-only -o /tmp/maieutics-feedback-reconciliation-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-feedback-reconciliation-${RUN_ID}.json - <<'PROMPT'
 <paste the prompt below with [PLACEHOLDERS] substituted>
 PROMPT
+echo "OUTPUT_FILE=/tmp/maieutics-feedback-reconciliation-${RUN_ID}.json"
 ```
 
-Parse the JSON from the `-o` output file (`/tmp/maieutics-feedback-reconciliation-${RUN_ID}.json`), not from stdout. Generate a new `RUN_ID` for each invocation.
+Parse the JSON from the `-o` output file (`/tmp/maieutics-feedback-reconciliation-${RUN_ID}.json`), not from stdout. Generate a new `RUN_ID` for each invocation. **Never use glob patterns to find the output file.**
 
 This reconciler **classifies only**. It does not rewrite files. It does not fix code. It tells the main controller how to classify each feedback item, what layer it affects, and whether the human must be asked.
 

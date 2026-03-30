@@ -30,9 +30,9 @@
 
 **Perspectives used:** [product, security, ...]
 
-**Generated Questions**
-1. [Question text]
-2. [Question text]
+**Generated Questions (Codex raw → Rewritten)**
+1. _Codex:_ [Original question text] → _Presented:_ [Rewritten question with context and explanations]
+2. _Codex:_ [Original question text] → _Presented:_ [Rewritten question with context and explanations]
 
 **User Answers (Verbatim)**
 1. [Answer]

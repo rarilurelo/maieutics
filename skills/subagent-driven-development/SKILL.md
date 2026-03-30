@@ -84,11 +84,13 @@ After all plan tasks are complete:
 
 #### Exact Command
 
+**IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
+
 ```bash
-RUN_ID=$(uuidgen)
-codex exec --full-auto -s read-only -o /tmp/maieutics-impl-review-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-impl-review-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from implementation-reviewer-prompt.md>
 PROMPT
+echo "OUTPUT_FILE=/tmp/maieutics-impl-review-${RUN_ID}.json"
 ```
 
 - `RUN_ID=$(uuidgen)` — generates a unique ID per invocation to avoid stale file collisions across sessions
@@ -98,6 +100,8 @@ PROMPT
 - `-` — read prompt from stdin (use heredoc)
 
 Parse the output from the `-o` file, not from stdout (stdout contains progress logs). Generate a new `RUN_ID` for each invocation (including retries and subsequent review rounds).
+
+**NEVER use glob patterns (e.g. `ls /tmp/maieutics-impl-review-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
 
 ### Review Loop Limit
 
