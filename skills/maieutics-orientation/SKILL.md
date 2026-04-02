@@ -73,7 +73,7 @@ digraph skill_flow {
 
 ### Core Workflow (in order)
 
-1. **maieutics:inquiry** — Lenses-based question generation via `codex exec`. Explores user intent through batched questions from 5 lenses (Product, Security, Maintainability, UX, Architecture). Produces an Inquiry Record and Design Synthesis.
+1. **maieutics:inquiry** — Per-lens question generation via `codex exec`. Explores user intent by running independent lens workers for Product, Security, Maintainability, UX, and Architecture, then aggregating evidence-backed questions into an Inquiry Record and Design Synthesis.
 
 2. **maieutics:execution-planning** — Creates bite-sized implementation plans from approved design syntheses. Reviews plans via `codex exec` with fix loops until no Critical/Important issues remain.
 

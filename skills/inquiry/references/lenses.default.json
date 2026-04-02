@@ -1,7 +1,7 @@
 {
-  "version": 1,
+  "version": 2,
   "external_engine": "codex",
-  "question_batch_size": 4,
+  "display_policy": "show-all-by-lens",
   "review_blocking_severities": [
     "Critical",
     "Important"
@@ -14,6 +14,29 @@
         "Who is this for?",
         "What outcome matters most?",
         "What is explicitly out of scope?"
+      ],
+      "trigger_signals": [
+        "new end-user workflows or operator responsibilities",
+        "unclear source of business value or success criteria",
+        "feature requests that sound solution-first instead of outcome-first"
+      ],
+      "investigation_targets": [
+        "product or requirements docs",
+        "user-facing routes, commands, or jobs that expose the behavior",
+        "existing tests or fixtures that reveal expected outcomes"
+      ],
+      "ambiguity_patterns": [
+        "multiple plausible user groups with different needs",
+        "success criteria missing from the request or current artifacts",
+        "scope boundaries implied in code but not stated by the user"
+      ],
+      "evidence_requirements": [
+        "inspect at least one user-facing entry point or requirements artifact before asking",
+        "ground each question in observed behavior, naming, or missing outcome definition"
+      ],
+      "followup_rules": [
+        "if multiple actors exist, ask which actor matters first",
+        "if outcomes are implied but unranked, ask for the primary success metric or ordering"
       ],
       "review_focus": [
         "Missing user value",
@@ -30,6 +53,29 @@
         "What misuse or abuse must be prevented?",
         "What security constraints are non-negotiable?"
       ],
+      "trigger_signals": [
+        "authentication, authorization, or policy code",
+        "personally identifiable information, secrets, uploads, or external inputs",
+        "background jobs, webhooks, or integrations crossing trust boundaries"
+      ],
+      "investigation_targets": [
+        "authn/authz middleware, policies, or guards",
+        "validation layers, serializers, and persistence boundaries",
+        "security-related docs, env vars, and integration points"
+      ],
+      "ambiguity_patterns": [
+        "missing trust boundary ownership",
+        "sensitive data flow not obvious from code paths",
+        "unsafe fallback or default behavior not explicitly owned"
+      ],
+      "evidence_requirements": [
+        "inspect at least one boundary where untrusted input enters the system",
+        "cite the specific file or config that suggests a security-relevant gap"
+      ],
+      "followup_rules": [
+        "if a boundary is found without clear validation, ask who owns that validation",
+        "if different roles touch the same resource, ask about required authorization differences"
+      ],
       "review_focus": [
         "Missing validation or authorization",
         "Sensitive data mishandling",
@@ -44,6 +90,29 @@
         "What existing patterns should be preserved?",
         "What complexity is unacceptable?",
         "What should stay simple even if less flexible?"
+      ],
+      "trigger_signals": [
+        "duplicate implementations or near-duplicate workflows",
+        "legacy seams, adapters, or thin abstractions already present",
+        "operational burden hidden behind a simple product request"
+      ],
+      "investigation_targets": [
+        "existing modules that appear to solve adjacent problems",
+        "test layout and existing extension points",
+        "runbooks, scripts, or operational docs tied to the area"
+      ],
+      "ambiguity_patterns": [
+        "unclear ownership between old and new paths",
+        "existing patterns that could be reused or accidentally bypassed",
+        "acceptable complexity not stated despite multiple implementation paths"
+      ],
+      "evidence_requirements": [
+        "inspect at least one adjacent implementation or pattern before asking for new structure",
+        "cite concrete duplication, coupling, or missing operational visibility"
+      ],
+      "followup_rules": [
+        "if two viable patterns exist, ask which one should remain the default",
+        "if operational burden is implied, ask what maintenance cost is unacceptable"
       ],
       "review_focus": [
         "Overengineering",
@@ -60,6 +129,29 @@
         "What failure or confusion states matter most?",
         "What must feel simple from the user's perspective?"
       ],
+      "trigger_signals": [
+        "user-facing forms, commands, or response messages",
+        "multi-step workflows or recovery paths",
+        "operator tooling where confusion would cause errors"
+      ],
+      "investigation_targets": [
+        "UI components, prompts, command surfaces, or API response contracts",
+        "error handling branches and empty states",
+        "tests, snapshots, or docs that reveal expected user flow"
+      ],
+      "ambiguity_patterns": [
+        "happy path is visible but failure path is not",
+        "different actors likely need different affordances",
+        "workflow complexity visible in code but not acknowledged in requirements"
+      ],
+      "evidence_requirements": [
+        "inspect at least one user touchpoint and one failure path before asking",
+        "cite the observed confusion risk or missing recovery detail"
+      ],
+      "followup_rules": [
+        "if the workflow spans multiple steps, ask where the user most needs clarity",
+        "if failure handling is implicit, ask what recovery experience is acceptable"
+      ],
       "review_focus": [
         "Confusing behavior",
         "Poor failure handling",
@@ -74,6 +166,29 @@
         "Where should this live?",
         "What existing systems does it touch?",
         "What architectural constraints already exist?"
+      ],
+      "trigger_signals": [
+        "cross-package dependencies or boundary-crossing changes",
+        "new persistence, eventing, or integration requirements",
+        "multiple plausible homes for the same responsibility"
+      ],
+      "investigation_targets": [
+        "package boundaries, module ownership, and dependency edges",
+        "data models, queues, events, or integration adapters",
+        "architectural docs, ADRs, or existing dependency constraints"
+      ],
+      "ambiguity_patterns": [
+        "responsibility could live in more than one place",
+        "existing integration points are partially implicit",
+        "source of truth for data flow or lifecycle is unclear"
+      ],
+      "evidence_requirements": [
+        "inspect at least one current boundary and one neighboring integration point before asking",
+        "cite the specific structural ambiguity that the question is trying to resolve"
+      ],
+      "followup_rules": [
+        "if multiple homes are plausible, ask which boundary should own the behavior",
+        "if an existing system is touched, ask about the required integration depth or constraints"
       ],
       "review_focus": [
         "Bad boundary placement",

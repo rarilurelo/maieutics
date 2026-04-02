@@ -1,6 +1,6 @@
 ---
 name: inquiry
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements, and design before implementation, using lens-based question generation and inquiry recording."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements, and design before implementation, using per-lens question generation and inquiry recording."
 ---
 
 # Inquiry Into Design
@@ -9,9 +9,9 @@ description: "You MUST use this before any creative work - creating features, bu
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
-This version extends the normal inquiry flow with **lenses question generation**. Questions are generated via `codex exec` so the main Claude Code session stays clean. Codex's job is **question generation only**. It does not design, plan, or implement.
+This version extends the normal inquiry flow with **per-lens question generation**. Questions are generated via `codex exec` so the main Claude Code session stays clean. Each `codex exec` run is responsible for exactly one lens, explores the repository for evidence, and returns structured output for that lens only. Codex's job is **question generation only**. It does not design, plan, or implement.
 
-The user's raw input, every generated question, and every answer are saved and become **authoritative inputs** for the rest of the workflow.
+The user's raw input, every generated question, every supplement shown to the user, every answer, and the evolving assumption state are saved and become **authoritative inputs** for the rest of the workflow.
 
 Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
 
@@ -37,9 +37,10 @@ Every project goes through this process. A todo list, a single-function utility,
 
 **Authority order:**
 1. Latest explicit user answers in the inquiry record
-2. Raw user input captured in the inquiry record
-3. Approved design synthesis
-4. Everything else
+2. Confirmed assumptions in the inquiry record
+3. Raw user input captured in the inquiry record
+4. Approved design synthesis
+5. Everything else
 
 If design text later conflicts with the inquiry record, update the design. Do NOT silently override the user's answers.
 
@@ -51,19 +52,20 @@ You MUST create a task for each of these items and complete them in order:
 2. **Load lenses config** — use project-local config if present, otherwise the bundled default
 3. **Create isolated workspace** — invoke `using-git-worktrees` to create a feature branch. Use the user's initial topic/request to derive the branch name. All subsequent artifacts (inquiry record, design synthesis, etc.) are committed on this feature branch, never on main.
 4. **Create or update inquiry record** — save the user's raw input verbatim before asking more questions
-5. **Generate next question batch via codex exec** — use [question-generator-prompt.md](question-generator-prompt.md), passing file paths to the inquiry record and lenses config
-6. **Ask the user a grouped batch of questions** — ask 3-5 questions in one message (default: 4). **Do NOT pass Codex's question text through as-is.** Rewrite each question for the user following these rules:
-   - **Plain-language rewrite**: Rephrase the question so that a non-engineer stakeholder can understand it. If the original uses jargon (e.g. "idempotency", "eventual consistency", "trust boundary"), keep the term but add a short inline explanation in parentheses.
-   - **Context bridge**: Add one sentence explaining *why this question came up now* — connect it to the user's earlier answers or the current state of the inquiry record.
-   - **Expanded choices**: When `suggested_choices` exist, present each choice with a brief pros/cons note or concrete example so the user can make an informed pick.
-   - **`why_it_matters` integration**: Weave the `why_it_matters` value naturally into the question or present it as a short "This matters because …" line below the question — do not drop it silently.
-   - **Preserve intent**: The rewritten question must ask for the same information Codex requested. Do not narrow, broaden, or redirect the question's scope.
-7. **Record answers verbatim** — append each question (both the original Codex question and the rewritten version) and the user's answer to the inquiry record
-8. **Repeat until ready for design** — continue inquiry rounds until the external question generator says the design can be written, or until only human-decided tradeoffs remain
-9. **Propose 2-3 approaches** — with trade-offs and your recommendation
-10. **Present design** — in sections scaled to complexity, get user approval after each section
-11. **Write design synthesis** — save to `docs/plans/YYYY-MM-DD-<topic>-design-synthesis.md` and commit (now on the feature branch)
-12. **Transition to implementation planning** — invoke `execution-planning`
+5. **Generate per-lens question sets via codex exec** — use [question-generator-prompt.md](question-generator-prompt.md), passing file paths to the inquiry record and lenses config, and run one independent `codex exec` per active lens
+6. **Aggregate lens outputs** — collect every per-lens result, merge duplicated questions, preserve lens attribution, and update assumption state before asking the user anything
+7. **Ask the user the raw questions with supplements** — present Codex's original question text unchanged, then add a structured supplement under it with:
+   - **Context**: why this question surfaced now, based on the inquiry record and the current lens run
+   - **Why this matters**: the exact design, planning, scope, or risk implication
+   - **Observed evidence**: the evidence refs that triggered the question
+   - **Choices**: optional suggested choices with brief pros/cons or concrete examples
+8. **Record answers verbatim** — append each raw Codex question, the supplement shown to the user, the evidence refs, and the user's answer to the inquiry record
+9. **Maintain assumptions explicitly** — promote, update, or invalidate assumptions in the inquiry record after every round
+10. **Repeat until all active lenses are exhausted** — continue inquiry rounds until every active lens returns `meaningful-questions-exhausted`
+11. **Propose 2-3 approaches** — with trade-offs and your recommendation
+12. **Present design** — in sections scaled to complexity, get user approval after each section
+13. **Write design synthesis** — save to `docs/plans/YYYY-MM-DD-<topic>-design-synthesis.md` and commit (now on the feature branch)
+14. **Transition to implementation planning** — invoke `execution-planning`
 
 ## Lenses Question Generation
 
@@ -73,17 +75,20 @@ Use `codex exec` so the main Claude Code session does not get polluted with inte
 
 Preferred pattern:
 
-1. Main session ensures the inquiry record is saved to disk with the latest user answers
-2. Main session runs `codex exec` with the prompt from [question-generator-prompt.md](question-generator-prompt.md), substituting:
+1. Main session ensures the inquiry record is saved to disk with the latest user answers and assumption state
+2. Main session enumerates the active lens IDs from the current stage in the lenses config
+3. Main session runs one independent `codex exec` per active lens using [question-generator-prompt.md](question-generator-prompt.md), substituting:
    - `[INQUIRY_RECORD_PATH]` → actual path to the inquiry record (e.g. `docs/plans/2026-03-10-slack-bot-inquiry-record.md`)
    - `[LENSES_CONFIG_PATH]` → `.maieutics/lenses.json` or the bundled default
+   - `[TARGET_LENS_ID]` → the active lens for that run
    - `Project Context Summary` → a short summary of the repo (tech stack, structure, relevant constraints)
-3. Codex reads the files, generates questions, and returns **only structured JSON output**
-4. Main session parses the JSON, asks the user the question batch, and records the answers in the inquiry record
+4. Each Codex run reads the files, explores the repository for that lens, and returns **only structured JSON output for that lens**
+5. Main session aggregates the per-lens outputs, deduplicates overlapping questions, preserves evidence and lens attribution, and updates the inquiry record
+6. Main session presents the resulting questions to the user and records the answers in the inquiry record
 
 #### Exact Command
 
-**IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
+**IMPORTANT: Run each command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
 
 ```bash
 RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-questions-${RUN_ID}.json - <<'PROMPT'
@@ -102,22 +107,45 @@ Parse the output from the `-o` file, not from stdout (stdout contains progress l
 
 **NEVER use glob patterns (e.g. `ls /tmp/maieutics-questions-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
 
-### Rules for Question Batches
+### Aggregation Responsibilities
 
-- Ask **3-5 questions per round**; default to **4**
-- Prefer different lenses in the same batch unless one lens contains the only remaining blocker
-- Prefer multiple-choice or constrained questions when helpful
-- Do NOT ask for information already answered
-- Do NOT generate implementation steps, code, or plans in the external question worker
-- Do NOT dump the entire subprocess transcript into the main conversation; save durable information to the inquiry record instead
+The main session is responsible for all cross-lens coordination:
+
+- Determine which lenses are active for the inquiry stage
+- Run the lens workers independently so they can be parallelized by the calling environment
+- Merge duplicate questions that are substantively asking for the same missing fact or tradeoff
+- Preserve the original raw question text for every remaining question
+- Combine evidence refs when deduplicating
+- Order the final user-facing list by blockingness, then priority, then lens
+- Update the inquiry record's assumptions and open questions after each aggregation pass
+
+### Rules for User-Facing Questions
+
+- Present the raw Codex question text unchanged
+- Add supplements instead of rewriting the question
+- Do NOT remove jargon from the raw question if that changes the wording; explain it in the supplement instead
+- Show the evidence that triggered the question
+- Group displayed questions by lens using the configured display policy
+- Default display policy is `show-all-by-lens`
+- If a project-local config introduces `display_limit`, treat it as a presentation limit only. It MUST NOT limit generation.
 
 ### When to Stop Asking Questions
 
-Stop the question-generation loop when one of these is true:
+Stop the question-generation loop only when **all active lenses** return `meaningful-questions-exhausted`.
 
-- Codex returns `enough-context`
-- The remaining unknowns are minor enough that the design can still be validated section-by-section
-- The only remaining blockers are tradeoffs that must be decided by the human, and you are ready to ask them directly
+A lens is exhausted only when:
+
+- it has explored the repository for its own concerns
+- it has no remaining meaningful unresolved questions
+- the remaining unknowns would not materially change design, planning, scope, or risk handling
+
+A question is **not** meaningful if:
+
+- it is a rewording of something already asked
+- it can already be answered from the inquiry record, confirmed assumptions, or repository evidence
+- it is merely nice to know, curiosity-driven, or unsupported by evidence
+
+Do not stop just because one lens is exhausted. Inquiry ends when the full active lens set is exhausted.
 
 ## Presenting Approaches and the Design
 
@@ -144,7 +172,7 @@ Once you believe you understand what you're building:
   - testing strategy
   - stage-relevant constraints surfaced by the lenses
 
-If the user changes an answer during design review, append that change to the inquiry record and revise the design accordingly.
+If the user changes an answer during design review, append that change to the inquiry record, update the assumption state if needed, and revise the design accordingly.
 
 ## After the Design
 
@@ -166,9 +194,12 @@ After documentation is committed:
 ## Key Principles
 
 - **Question generation happens via codex exec** — main session stays clean
-- **Codex only asks questions** — no design, no planning, no implementation
-- **Grouped questions, not one-by-one** — 3-5 per round
+- **Each Codex run owns one lens** — the calling environment coordinates parallelism
+- **Repository exploration is mandatory** — short summaries are not enough on their own
+- **Evidence-backed questions only** — no generic or speculative prompts
+- **Raw question plus supplement** — preserve wording, add context separately
 - **Inquiry record is authoritative** — later stages must use it
+- **Assumptions are explicit state** — confirmed, working, and invalidated assumptions persist across rounds
 - **Explore alternatives** — always propose 2-3 approaches before settling
 - **Incremental validation** — present design, get approval before moving on
 - **Be flexible** — go back and clarify when something does not make sense

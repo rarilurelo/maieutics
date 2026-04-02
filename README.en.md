@@ -24,8 +24,9 @@ The name **Maieutics** comes from this Socratic art of midwifery. The goal is to
 
 ## Features
 
-- **Lenses-based questioning**: Questions are generated from 5 lenses (Product, Security, Maintainability, UX, Architecture) via `codex exec`, not one-by-one by the main agent
-- **Inquiry Record**: Every user answer is recorded in a durable log that becomes the authoritative source of truth for all later stages
+- **Per-lens questioning**: Each lens runs in its own `codex exec`, while the calling session owns parallelism and aggregation
+- **Evidence-backed questions**: Each lens explores the repo and returns questions grounded in observed files, configs, and boundaries
+- **Inquiry Record**: Every user answer plus the evolving confirmed / working / invalidated assumptions are stored in a durable log
 - **Codex-powered reviews**: Design reviews, plan reviews, and implementation reviews are run via `codex exec` — a separate model provides independent assessment
 - **Review loops**: Reviews repeat until no Critical or Important issues remain
 
@@ -56,7 +57,7 @@ cp -r path/to/maieutics/skills/ .claude/skills/
 inquiry → using-git-worktrees → execution-planning → delegated-execution → closing-the-branch
 ```
 
-1. **inquiry** — Generates batched questions via `codex exec` from multiple lenses. Records all answers in an Inquiry Record. Produces an approved Design Synthesis.
+1. **inquiry** — Runs `codex exec` independently per lens, generates repo-exploration-backed questions, aggregates the results in the calling session, and records raw question + supplement plus assumption state in the Inquiry Record. Inquiry continues until every active lens reaches `meaningful-questions-exhausted`.
 
 2. **using-git-worktrees** — Creates an isolated git worktree for the feature branch. Follows project conventions for location selection, then runs setup and baseline verification.
 
@@ -70,13 +71,13 @@ inquiry → using-git-worktrees → execution-planning → delegated-execution �
 
 ### Lenses Config
 
-Create `.maieutics/lenses.json` in your project root to customize lenses, question batch size, and review settings. See `skills/inquiry/references/lenses.default.json` for the default configuration.
+Create `.maieutics/lenses.json` in your project root to customize lenses, display policy, and review settings. See `skills/inquiry/references/lenses.default.json` for the default configuration.
 
 ## Skills
 
 | Skill | Purpose |
 |---|---|
-| `inquiry` | Lenses-based question generation, Inquiry Record, Design Synthesis |
+| `inquiry` | Per-lens question generation, Inquiry Record, Design Synthesis |
 | `execution-planning` | Implementation plans with codex-powered review loops |
 | `delegated-execution` | Subagent-per-task execution with review gates |
 | `guided-execution` | Separate-session plan execution with human checkpoints |
