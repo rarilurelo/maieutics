@@ -25,7 +25,7 @@ Before executing any task, identify and keep track of:
 - `docs/plans/YYYY-MM-DD-<topic>-execution-plan.md`
 - Lenses config: `.maieutics/lenses.json` if present, otherwise `../inquiry/references/lenses.default.json`
 
-The inquiry record and user answers are authoritative. If the plan later proves inconsistent with them, update the plan and implement against the corrected version.
+The inquiry record, user answers, and confirmed assumptions are authoritative. Working assumptions are unresolved until explicitly handled or confirmed. Invalidated assumptions must not be used. If the plan later proves inconsistent with them, update the plan and implement against the corrected version.
 
 ## When to Use
 
@@ -79,7 +79,7 @@ After all plan tasks are complete:
    - `[EXECUTION_PLAN_PATH]` → actual path to the execution plan
    - `[LENSES_CONFIG_PATH]` → `.maieutics/lenses.json` or the bundled default
    - `Carried Findings` → bullet list of durable discoveries from task workers
-   - `Current Implementation State` → branch context, diff summary, test results
+   - `Current Implementation State` → branch context, diff summary, test results, used only as an entry point for direct repo inspection
 3. Parse the returned JSON and act on the result
 
 #### Exact Command
@@ -121,6 +121,7 @@ This prevents infinite fix loops where each fix introduces new issues.
 
 **If status is `needs-fix`:**
 - Convert the issues into follow-up implementation work
+- Update the inquiry record's assumption state if the reviewer identified stale, unresolved, or invalidated assumptions
 - If the findings reveal a design/plan mismatch, update the design and/or plan first
 - Dispatch the implementation worker to fix the issues
 - Re-run the final lenses implementation review (respecting the 3-round limit)
@@ -128,6 +129,7 @@ This prevents infinite fix loops where each fix introduces new issues.
 **If status is `needs-user-input`:**
 - Ask the user all blocker questions in one grouped message
 - Append the answers to the inquiry record
+- Update the assumption state based on the user's answers
 - Update design and/or plan if needed
 - Implement the resulting changes
 - Re-run the final lenses implementation review
@@ -174,3 +176,4 @@ Never do these:
 - Make workers read the plan file themselves when you can provide the exact task text
 - Ignore worker questions or reviewer escalation questions
 - Finish the branch before the final review loop is clean
+- Accept review findings that are not backed by inspected repo evidence

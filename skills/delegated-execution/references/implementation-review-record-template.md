@@ -5,7 +5,7 @@
 **Inquiry Record:** `docs/plans/[YYYY-MM-DD-topic]-inquiry-record.md`  
 **Design Synthesis:** `docs/plans/[YYYY-MM-DD-topic]-design-synthesis.md`  
 **Execution Plan:** `docs/plans/[YYYY-MM-DD-topic]-execution-plan.md`  
-**Review Engine:** codex
+**Review Engine:** codex  
 **Status:** [in-review | approved | superseded]
 
 ---
@@ -18,6 +18,17 @@
 
 **Summary**
 [Short summary]
+
+**Evidence Highlights**
+- [Repo evidence or authoritative text that materially shaped this round]
+
+**Assumption Summary**
+- Confirmed Assumptions Relied On:
+  - [Assumption]
+- Working Assumptions Requiring Resolution:
+  - [Assumption]
+- Invalidated Assumptions Referenced:
+  - [Assumption]
 
 **Blocking Issues**
 - [Issue]
@@ -34,10 +45,15 @@
 **Implementation / Doc Fixes Applied**
 - [Fix]
 
+**Assumption Updates Applied**
+- [Confirmed / working / invalidated assumption change made after this round]
+
 ---
 
 ## Final State
 
 - [ ] No Critical issues remain
 - [ ] No Important issues remain
+- [ ] No invalidated assumption is still referenced by the implementation or supporting docs
+- [ ] Any remaining working assumptions are explicitly handled and no longer block branch completion
 - [ ] Implementation is aligned enough to finish the branch

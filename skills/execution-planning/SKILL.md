@@ -12,7 +12,7 @@ Write comprehensive implementation plans assuming the engineer has zero context 
 This version assumes you already have:
 
 - an approved design synthesis
-- an inquiry record containing the user's raw input, generated questions, and answers
+- an inquiry record containing the user's raw input, generated questions, answers, and explicit assumption state
 
 Before handing the plan off to implementation, you MUST run a **lenses design/plan review** via `codex exec`. Codex only reviews. **You** fix the design and/or plan yourself. Repeat until no **Critical** or **Important** issues remain, or until Codex says the only safe next step is to ask the human grouped questions.
 
@@ -27,7 +27,7 @@ You MUST read and use all of these:
 - relevant repo/project context
 - `.maieutics/lenses.json` if present, otherwise `../inquiry/references/lenses.default.json`
 
-The inquiry record is authoritative. If the design conflicts with it, update the design. Do NOT plan against stale assumptions.
+The inquiry record is authoritative. Confirmed assumptions are part of that authority. Working assumptions are unresolved until explicitly confirmed or handled in the plan. Invalidated assumptions must not be used. If the design conflicts with the inquiry record, update the design. Do NOT plan against stale assumptions.
 
 ## Output Files
 
@@ -47,7 +47,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Save the plan draft** — use the required filename
 4. **Run design/plan review via codex exec** — use [design-plan-reviewer-prompt.md](design-plan-reviewer-prompt.md), passing file paths to the inquiry record, design synthesis, execution plan, and lenses config
 5. **Fix issues yourself** — update design and/or plan when the reviewer returns Critical or Important issues that can be resolved from existing context
-6. **Ask grouped user questions when truly needed** — if the reviewer says the issue cannot be resolved without the human, ask the user all pending blocker questions in one message, append answers to the inquiry record, then update design and/or plan
+6. **Ask grouped user questions when truly needed** — if the reviewer says the issue cannot be resolved without the human, ask the user all pending blocker questions in one message, making the triggering assumption or authority conflict explicit, append answers to the inquiry record, then update design and/or plan
 7. **Repeat the review loop** — continue until no Critical or Important issues remain
 8. **Commit design, plan, and review record** — they are part of the durable workflow state
 9. **Offer execution choice** — delegated-execution in this session or guided-execution in a separate session
@@ -134,7 +134,7 @@ Use `codex exec` so the main Claude Code planning session stays focused. Codex r
    - `[DESIGN_SYNTHESIS_PATH]` → actual path (e.g. `docs/plans/2026-03-10-slack-bot-design-synthesis.md`)
    - `[EXECUTION_PLAN_PATH]` → actual path (e.g. `docs/plans/2026-03-10-slack-bot-execution-plan.md`)
    - `[LENSES_CONFIG_PATH]` → `.maieutics/lenses.json` or the bundled default
-   - `Project Context Summary` → a short summary of the repo
+   - `Project Context Summary` → a short summary of the repo that acts only as an entry point for repo exploration, not a substitute for it
 3. Parse the returned JSON and act on the result
 
 #### Exact Command
@@ -176,12 +176,14 @@ This prevents infinite fix loops where each fix introduces new issues.
 
 **If status is `needs-fix`:**
 - Fix the design and/or plan yourself
+- Update the inquiry record's assumption state if the reviewer identified stale, unresolved, or invalidated assumptions
 - Append the review round to the review record
 - Re-run the external review (respecting the 3-round limit)
 
 **If status is `needs-user-input`:**
 - Ask the user the grouped blocker questions
 - Append answers verbatim to the inquiry record
+- Update the assumption state based on the user's answers
 - Update design and/or plan
 - Re-run the external review
 
@@ -197,6 +199,7 @@ You MUST NOT hand the plan off for implementation while any **Critical** or **Im
 - Complete code in the plan (not "add validation")
 - Exact commands with expected output
 - Inquiry record is authoritative
+- Review findings must be backed by repo evidence, not just summaries
 - Codex only reviews; it does not fix
 - DRY, YAGNI, TDD, frequent commits
 
