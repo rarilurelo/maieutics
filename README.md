@@ -53,16 +53,18 @@ cp -r path/to/maieutics/skills/ .claude/skills/
 ## ワークフロー
 
 ```
-inquiry → execution-planning → delegated-execution → closing-the-branch
+inquiry → using-git-worktrees → execution-planning → delegated-execution → closing-the-branch
 ```
 
 1. **inquiry** — `codex exec` で複数レンズからバッチ質問を生成。すべての回答を Inquiry Record に記録。承認済みの Design Synthesis を作成。
 
-2. **execution-planning** — 設計から小さな実装タスク（各2〜5分）を作成。`codex exec` でレビューし、修正ループを実行。TDD、DRY、YAGNI の原則に従う。
+2. **using-git-worktrees** — feature branch 用の隔離された git worktree を作成。プロジェクトの規約に沿って保存場所を選び、セットアップとベースライン検証を行う。
 
-3. **delegated-execution** — タスクごとに新しい Claude Code サブエージェントを起動。タスクごとに2段階レビュー（仕様準拠 + コード品質）。最終的に `codex exec` でレンズベースの実装レビューを実施。
+3. **execution-planning** — 設計から小さな実装タスク（各2〜5分）を作成。`codex exec` でレビューし、修正ループを実行。TDD、DRY、YAGNI の原則に従う。
 
-4. **closing-the-branch** — テストを検証し、オプションを提示（マージ/PR/保持/破棄）、クリーンアップ。
+4. **delegated-execution** — タスクごとに新しい Claude Code サブエージェントを起動。タスクごとに2段階レビュー（仕様準拠 + コード品質）。最終的に `codex exec` でレンズベースの実装レビューを実施。
+
+5. **closing-the-branch** — テストを検証し、オプションを提示（マージ/PR/保持/破棄）、クリーンアップ。
 
 ## カスタマイズ
 

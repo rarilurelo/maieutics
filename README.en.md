@@ -35,16 +35,18 @@ cp -r path/to/maieutics/skills/ .claude/skills/
 ## The Workflow
 
 ```
-inquiry → execution-planning → delegated-execution → closing-the-branch
+inquiry → using-git-worktrees → execution-planning → delegated-execution → closing-the-branch
 ```
 
 1. **inquiry** — Generates batched questions via `codex exec` from multiple lenses. Records all answers in an Inquiry Record. Produces an approved Design Synthesis.
 
-2. **execution-planning** — Creates bite-sized implementation tasks (2-5 min each) from the design. Reviews the plan via `codex exec` with fix loops. TDD, DRY, YAGNI.
+2. **using-git-worktrees** — Creates an isolated git worktree for the feature branch. Follows project conventions for location selection, then runs setup and baseline verification.
 
-3. **delegated-execution** — Dispatches a fresh Claude Code subagent per task. Two-stage review per task (spec compliance + code quality). Final lenses implementation review via `codex exec`.
+3. **execution-planning** — Creates bite-sized implementation tasks (2-5 min each) from the design. Reviews the plan via `codex exec` with fix loops. TDD, DRY, YAGNI.
 
-4. **closing-the-branch** — Verifies tests, presents options (merge/PR/keep/discard), cleans up.
+4. **delegated-execution** — Dispatches a fresh Claude Code subagent per task. Two-stage review per task (spec compliance + code quality). Final lenses implementation review via `codex exec`.
+
+5. **closing-the-branch** — Verifies tests, presents options (merge/PR/keep/discard), cleans up.
 
 ## Customization
 
