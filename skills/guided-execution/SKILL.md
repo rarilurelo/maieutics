@@ -1,23 +1,23 @@
 ---
-name: executing-plans
+name: guided-execution
 description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
 ---
 
-# Executing Plans
+# Guided Execution
 
 ## Overview
 
 Load plan, review critically, execute all tasks, report when complete.
 
-**Announce at start:** "I'm using the executing-plans skill to implement this plan."
+**Announce at start:** "I'm using the guided-execution skill to implement this plan."
 
-**Note:** Tell your human partner that Maieutics works much better with access to subagents. The quality of its work will be significantly higher if run on a platform with subagent support (such as Claude Code or Codex). If subagents are available, use maieutics:subagent-driven-development instead of this skill.
+**Note:** Tell your human partner that Maieutics works much better with access to subagents. The quality of its work will be significantly higher if run on a platform with subagent support (such as Claude Code or Codex). If subagents are available, use maieutics:delegated-execution instead of this skill.
 
 ## The Process
 
 ### Step 1: Load and Review Plan
 1. Read plan file
-2. Also load the discovery log (`docs/plans/YYYY-MM-DD-<topic>-discovery.md`). The discovery log is the authoritative source of truth. If the plan conflicts with user answers in the discovery log, raise the conflict before proceeding.
+2. Also load the inquiry record (`docs/plans/YYYY-MM-DD-<topic>-inquiry-record.md`). The inquiry record is the authoritative source of truth. If the plan conflicts with user answers in the inquiry record, raise the conflict before proceeding.
 3. Review critically - identify any questions or concerns about the plan
 4. If concerns: Raise them with your human partner before starting
 5. If no concerns: Create TodoWrite and proceed
@@ -33,8 +33,8 @@ For each task:
 ### Step 3: Complete Development
 
 After all tasks complete and verified:
-- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use maieutics:finishing-a-development-branch
+- Announce: "I'm using the closing-the-branch skill to complete this work."
+- **REQUIRED SUB-SKILL:** Use maieutics:closing-the-branch
 - Follow that skill to verify tests, present options, execute choice
 
 ## When to Stop and Ask for Help
@@ -67,5 +67,5 @@ After all tasks complete and verified:
 
 **Required workflow skills:**
 - **maieutics:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
-- **maieutics:writing-plans** - Creates the plan this skill executes
-- **maieutics:finishing-a-development-branch** - Complete development after all tasks
+- **maieutics:execution-planning** - Creates the plan this skill executes
+- **maieutics:closing-the-branch** - Complete development after all tasks

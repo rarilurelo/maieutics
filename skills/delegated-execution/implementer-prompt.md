@@ -14,17 +14,17 @@ prompt: |
   [FULL TEXT of task from the plan - paste it here; do not make the worker read the file]
 
   ## Authoritative Context
-  - Raw user input / discovery log: [PASTE relevant excerpt and/or path]
-  - Approved design: [PASTE relevant excerpt and/or path]
-  - Approved plan: [PASTE relevant excerpt and/or path]
-  - Accumulated discoveries from earlier tasks: [PASTE bullet list]
+  - Raw user input / inquiry record: [PASTE relevant excerpt and/or path]
+  - Approved design synthesis: [PASTE relevant excerpt and/or path]
+  - Approved execution plan: [PASTE relevant excerpt and/or path]
+  - Carried findings from earlier tasks: [PASTE bullet list]
 
   ## Context
   [Scene-setting: where this fits, dependencies, architectural context]
 
   ## Source-of-Truth Rules
-  - The discovery log and raw user answers are authoritative.
-  - If the task text appears to conflict with the discovery log or approved design, stop and ask the controller instead of guessing.
+  - The inquiry record and raw user answers are authoritative.
+  - If the task text appears to conflict with the inquiry record or approved design synthesis, stop and ask the controller instead of guessing.
   - Do not widen scope.
   - Do not invent extra features.
 
@@ -59,7 +59,7 @@ prompt: |
   **Completeness**
   - Did I fully implement everything in the task?
   - Did I miss any requirements?
-  - Did I ignore anything from the discovery log or design context?
+  - Did I ignore anything from the inquiry record or design context?
 
   **Quality**
   - Is this my best work?

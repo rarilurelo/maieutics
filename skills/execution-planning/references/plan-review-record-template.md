@@ -1,10 +1,10 @@
-# [Topic] Design / Plan Review Log
+# [Topic] Plan Review Record
 
 **Date:** [YYYY-MM-DD]  
 **Topic Slug:** [topic-slug]  
-**Discovery Log:** `docs/plans/[YYYY-MM-DD-topic]-discovery.md`  
-**Design Doc:** `docs/plans/[YYYY-MM-DD-topic]-design.md`  
-**Plan Doc:** `docs/plans/[YYYY-MM-DD-topic]-plan.md`  
+**Inquiry Record:** `docs/plans/[YYYY-MM-DD-topic]-inquiry-record.md`  
+**Design Synthesis:** `docs/plans/[YYYY-MM-DD-topic]-design-synthesis.md`  
+**Execution Plan:** `docs/plans/[YYYY-MM-DD-topic]-execution-plan.md`  
 **Review Engine:** codex
 **Status:** [in-review | approved | superseded]
 
@@ -40,4 +40,4 @@
 
 - [ ] No Critical issues remain
 - [ ] No Important issues remain
-- [ ] Discovery log, design, and plan are aligned enough to implement
+- [ ] Inquiry record, design synthesis, and execution plan are aligned enough to implement

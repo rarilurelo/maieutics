@@ -1,31 +1,31 @@
 ---
-name: subagent-driven-development
-description: "Use when executing implementation plans with independent tasks in the current session. This version adds authoritative discovery context and a final multi-perspective implementation review loop."
+name: delegated-execution
+description: "Use when executing implementation plans with independent tasks in the current session. This version adds authoritative inquiry context and a final lenses implementation review loop."
 ---
 
-# Subagent-Driven Development
+# Delegated Execution
 
 Execute the plan by dispatching a **fresh implementation worker per task**, with standard per-task review after each task:
 
 1. spec compliance review
 2. code quality review
 
-After all planned tasks are complete, run a **final multi-perspective implementation review** via `codex exec`. If Codex finds Critical or Important issues, implementation continues until those issues are fixed. If Codex says the remaining blockers require the human, ask grouped user questions, update the authoritative artifacts, and continue.
+After all planned tasks are complete, run a **final lenses implementation review** via `codex exec`. If Codex finds Critical or Important issues, implementation continues until those issues are fixed. If Codex says the remaining blockers require the human, ask grouped user questions, update the authoritative artifacts, and continue.
 
 ## Core Principle
 
-Fresh worker per task + standard per-task reviews + final multi-perspective implementation review = higher quality, less context pollution, better alignment with what the human actually asked for.
+Fresh worker per task + standard per-task reviews + final lenses implementation review = higher quality, less context pollution, better alignment with what the human actually asked for.
 
 ## Authoritative Inputs
 
 Before executing any task, identify and keep track of:
 
-- `docs/plans/YYYY-MM-DD-<topic>-discovery.md`
-- `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- `docs/plans/YYYY-MM-DD-<topic>-plan.md`
-- Perspective config: `.maieutics/multi-perspective.json` if present, otherwise `../brainstorming/references/multi-perspective.default.json`
+- `docs/plans/YYYY-MM-DD-<topic>-inquiry-record.md`
+- `docs/plans/YYYY-MM-DD-<topic>-design-synthesis.md`
+- `docs/plans/YYYY-MM-DD-<topic>-execution-plan.md`
+- Lenses config: `.maieutics/lenses.json` if present, otherwise `../inquiry/references/lenses.default.json`
 
-The discovery log and user answers are authoritative. If the plan later proves inconsistent with them, update the plan and implement against the corrected version.
+The inquiry record and user answers are authoritative. If the plan later proves inconsistent with them, update the plan and implement against the corrected version.
 
 ## When to Use
 
@@ -36,7 +36,7 @@ Use this when:
 - you want to stay in the current session
 - you want automatic review loops between tasks and before finishing the branch
 
-If tasks are tightly coupled or you want human checkpoints between batches, use `executing-plans` instead.
+If tasks are tightly coupled or you want human checkpoints between batches, use `guided-execution` instead.
 
 ## Process
 
@@ -44,9 +44,9 @@ If tasks are tightly coupled or you want human checkpoints between batches, use 
 
 1. Read the plan file once
 2. Extract all tasks with full text and context
-3. Load the discovery log and approved design
+3. Load the inquiry record and approved design synthesis
 4. Create TodoWrite entries for all tasks
-5. Start an `Accumulated Discoveries` block for facts learned during implementation that later tasks should inherit
+5. Start an `Carried Findings` block for facts learned during implementation that later tasks should inherit
 
 ### Per Task Loop
 
@@ -55,9 +55,9 @@ For each task:
 1. Dispatch a fresh implementation worker using [implementer-prompt.md](implementer-prompt.md)
 2. Give the worker:
    - the full task text
-   - relevant discovery log excerpts
+   - relevant inquiry record excerpts
    - relevant design context
-   - accumulated discoveries from earlier tasks
+   - carried findings from earlier tasks
    - repo context needed for the task
 3. If the worker asks questions, answer them before allowing work to continue
 4. Worker implements, tests, commits, self-reviews
@@ -68,17 +68,17 @@ For each task:
 9. Record any durable discoveries from the worker's report and carry them into later tasks
 10. Mark the task complete in TodoWrite
 
-### Final Multi-Perspective Implementation Review
+### Final Lenses Implementation Review
 
 After all plan tasks are complete:
 
-1. Save or update `docs/plans/YYYY-MM-DD-<topic>-implementation-review.md` using [references/implementation-review-log-template.md](references/implementation-review-log-template.md)
+1. Save or update `docs/plans/YYYY-MM-DD-<topic>-implementation-review-record.md` using [references/implementation-review-record-template.md](references/implementation-review-record-template.md)
 2. Run `codex exec` with the prompt from [implementation-reviewer-prompt.md](implementation-reviewer-prompt.md), substituting:
-   - `[DISCOVERY_LOG_PATH]` → actual path to the discovery log
-   - `[DESIGN_DOC_PATH]` → actual path to the design doc
-   - `[PLAN_DOC_PATH]` → actual path to the plan doc
-   - `[PERSPECTIVE_CONFIG_PATH]` → `.maieutics/multi-perspective.json` or the bundled default
-   - `Accumulated Discoveries` → bullet list of durable discoveries from task workers
+   - `[INQUIRY_RECORD_PATH]` → actual path to the inquiry record
+   - `[DESIGN_SYNTHESIS_PATH]` → actual path to the design synthesis
+   - `[EXECUTION_PLAN_PATH]` → actual path to the execution plan
+   - `[LENSES_CONFIG_PATH]` → `.maieutics/lenses.json` or the bundled default
+   - `Carried Findings` → bullet list of durable discoveries from task workers
    - `Current Implementation State` → branch context, diff summary, test results
 3. Parse the returned JSON and act on the result
 
@@ -109,7 +109,7 @@ The final review loop runs **at most 3 rounds**. If Critical or Important issues
 
 - Present the unresolved issues clearly
 - Ask the user for direction on each remaining issue
-- Append answers to the discovery log
+- Append answers to the inquiry record
 - Apply the user's decisions, then run one final review
 
 This prevents infinite fix loops where each fix introduces new issues.
@@ -117,24 +117,24 @@ This prevents infinite fix loops where each fix introduces new issues.
 ### Final Review Outcomes
 
 **If status is `approved`:**
-- Continue to `finishing-a-development-branch`
+- Continue to `closing-the-branch`
 
 **If status is `needs-fix`:**
 - Convert the issues into follow-up implementation work
 - If the findings reveal a design/plan mismatch, update the design and/or plan first
 - Dispatch the implementation worker to fix the issues
-- Re-run the final multi-perspective implementation review (respecting the 3-round limit)
+- Re-run the final lenses implementation review (respecting the 3-round limit)
 
 **If status is `needs-user-input`:**
 - Ask the user all blocker questions in one grouped message
-- Append the answers to the discovery log
+- Append the answers to the inquiry record
 - Update design and/or plan if needed
 - Implement the resulting changes
-- Re-run the final multi-perspective implementation review
+- Re-run the final lenses implementation review
 
 ## Blocking Rule
 
-You MUST NOT finish the branch while any **Critical** or **Important** issue from the final multi-perspective implementation review remains unresolved.
+You MUST NOT finish the branch while any **Critical** or **Important** issue from the final lenses implementation review remains unresolved.
 
 **Minor** issues may be recorded, but they do not block completion.
 
@@ -143,7 +143,7 @@ You MUST NOT finish the branch while any **Critical** or **Important** issue fro
 - [implementer-prompt.md](implementer-prompt.md) — dispatch implementation worker
 - [spec-reviewer-prompt.md](spec-reviewer-prompt.md) — dispatch spec compliance reviewer
 - [code-quality-reviewer-prompt.md](code-quality-reviewer-prompt.md) — dispatch code quality reviewer
-- [implementation-reviewer-prompt.md](implementation-reviewer-prompt.md) — dispatch final multi-perspective implementation reviewer
+- [implementation-reviewer-prompt.md](implementation-reviewer-prompt.md) — dispatch final lenses implementation reviewer
 
 ## Advantages
 
@@ -151,11 +151,11 @@ You MUST NOT finish the branch while any **Critical** or **Important** issue fro
 
 - Fresh context per task
 - Better TDD discipline
-- Durable discoveries can be passed forward
+- Durable carried findings can be passed forward
 - Clarifying questions happen before or during work, not after
-- Final implementation gets checked against discovery, design, and plan — not just task text
+- Final implementation gets checked against inquiry, design, and plan — not just task text
 
-### vs. Executing Plans
+### vs. Guided Execution
 
 - Same session, faster iteration
 - Automatic review checkpoints
@@ -166,9 +166,9 @@ You MUST NOT finish the branch while any **Critical** or **Important** issue fro
 Never do these:
 
 - Start implementation without a plan
-- Ignore the discovery log or treat it as optional
+- Ignore the inquiry record or treat it as optional
 - Skip spec review or code quality review for a task
-- Skip the final multi-perspective implementation review
+- Skip the final lenses implementation review
 - Let Codex edit code directly
 - Proceed with unresolved Critical or Important review issues
 - Make workers read the plan file themselves when you can provide the exact task text

@@ -1,7 +1,7 @@
-# [Feature / Topic] Design
+# [Feature / Topic] Design Synthesis
 
 **Date:** [YYYY-MM-DD]  
-**Discovery Log:** `docs/plans/[YYYY-MM-DD-topic]-discovery.md`  
+**Inquiry Record:** `docs/plans/[YYYY-MM-DD-topic]-inquiry-record.md`  
 **Status:** [draft | approved | superseded]
 
 ---
@@ -12,8 +12,8 @@
 
 ## Authoritative Inputs
 
-- Raw user input and discovery log are the source of truth
-- Approved user answers captured during brainstorming
+- Raw user input and inquiry record are the source of truth
+- Approved user answers captured during inquiry
 - Relevant project context discovered from the repository
 
 ## Goals
@@ -59,7 +59,7 @@
 
 [Describe how the design will be validated.]
 
-## Perspective-Specific Notes
+## Lens-Specific Notes
 
 ### Product / Value
 [Notes]

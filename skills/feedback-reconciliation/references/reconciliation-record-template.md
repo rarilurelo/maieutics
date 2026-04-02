@@ -1,9 +1,9 @@
-# [Topic] Feedback Reconciliation Log
+# [Topic] Reconciliation Record
 
 **Date:** [YYYY-MM-DD]
 **Topic Slug:** [topic-slug]
-**Feedback Log:** `docs/plans/[YYYY-MM-DD-topic]-feedback-log.md`
-**Discovery Log:** `docs/plans/[YYYY-MM-DD-topic]-discovery.md`
+**Feedback Record:** `docs/plans/[YYYY-MM-DD-topic]-feedback-record.md`
+**Inquiry Record:** `docs/plans/[YYYY-MM-DD-topic]-inquiry-record.md`
 **Review Engine:** codex
 **Status:** [in-review | reconciled | superseded]
 
@@ -31,8 +31,8 @@
 **User Answers (Verbatim)**
 - [Answer]
 
-**Promotion to Discovery Log**
-- [What was added to Authoritative Decisions, with feedback item ID reference]
+**Promotion to Inquiry Record**
+- [What was added to Settled Decisions, with feedback item ID reference]
 
 ---
 
@@ -44,9 +44,9 @@
 
 ## Routing Decision
 
-- **Target Stage:** [brainstorming | writing-plans]
+- **Target Stage:** [inquiry | execution-planning]
 - **Reason:** [Why this stage was chosen]
-- **Delta Scope:** [What the delta plan or reopened discovery should cover]
+- **Delta Scope:** [What the delta plan or reopened inquiry should cover]
 
 ---
 
@@ -54,7 +54,7 @@
 
 - [ ] All feedback items have a disposition (accept / reject / defer)
 - [ ] No needs-user-input items remain
-- [ ] Accepted items are promoted to the Discovery Log
-- [ ] Design doc is updated if needed
+- [ ] Accepted items are promoted to the Inquiry Record
+- [ ] Design synthesis is updated if needed
 - [ ] Routing to next stage is determined
 - [ ] Feedback artifacts are committed

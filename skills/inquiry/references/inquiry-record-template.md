@@ -1,8 +1,8 @@
-# [Topic] Discovery Log
+# [Topic] Inquiry Record
 
 **Date:** [YYYY-MM-DD]  
 **Topic Slug:** [topic-slug]  
-**Perspective Config:** [.maieutics/multi-perspective.json or bundled default]  
+**Lenses Config:** [.maieutics/lenses.json or bundled default]  
 **External Engine:** codex
 **Status:** [questioning | ready-for-design | superseded]
 
@@ -14,7 +14,7 @@
 
 ---
 
-## Authoritative Decisions
+## Settled Decisions
 
 > Latest explicit user answers win.  
 > If an answer changes later, append the new answer and mark the older one superseded.
@@ -24,11 +24,11 @@
 
 ---
 
-## Question Rounds
+## Inquiry Rounds
 
 ### Round 1
 
-**Perspectives used:** [product, security, ...]
+**Lenses used:** [product, security, ...]
 
 **Generated Questions (Codex raw → Rewritten)**
 1. _Codex:_ [Original question text] → _Presented:_ [Rewritten question with context and explanations]
@@ -54,4 +54,4 @@
 - [ ] Goals and non-goals are clear
 - [ ] Major constraints are explicit
 - [ ] Blocking ambiguities are resolved or acknowledged
-- [ ] The next step is design, not more discovery
+- [ ] The next step is design, not more inquiry
