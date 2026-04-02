@@ -14,10 +14,10 @@ prompt: |
   [FULL TEXT of task requirements]
 
   ## Authoritative Context
-  - Discovery log / raw user input: [PASTE relevant excerpt and/or path]
-  - Approved design: [PASTE relevant excerpt and/or path]
-  - Approved plan: [PASTE relevant excerpt and/or path]
-  - Accumulated discoveries: [PASTE relevant excerpt if relevant]
+  - Inquiry record / raw user input: [PASTE relevant excerpt and/or path]
+  - Approved design synthesis: [PASTE relevant excerpt and/or path]
+  - Approved execution plan: [PASTE relevant excerpt and/or path]
+  - Carried findings: [PASTE relevant excerpt if relevant]
 
   ## What Implementer Claims They Built
   [From the implementation worker's report]
@@ -28,7 +28,7 @@ prompt: |
   ## Do Not
   - Take their word for what they implemented
   - Trust their completeness claims
-  - Ignore conflicts with the discovery log or design
+  - Ignore conflicts with the inquiry record or design synthesis
 
   ## Do
   - Read the actual code they wrote

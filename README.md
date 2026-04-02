@@ -8,7 +8,7 @@
 
 ソフトウェア開発における失敗の多くは、コードの品質ではなく「何を作るべきか」の理解不足から生まれます。要件を聞いたエージェントがすぐにコードを書き始める — これは一見効率的に見えますが、問いかけなしに書かれたコードは、的を外した解決策になりがちです。
 
-**Maieutics は「問いかけ」にフォーカスした Claude Code 向けスキルライブラリです。** プロダクト、セキュリティ、保守性、UX、アーキテクチャの5つの視点から問いを投げかけ、対話を通じてものごとの本質を明らかにしてから、はじめてコードを書き始めます。
+**Maieutics は「問いかけ」にフォーカスした Claude Code 向けスキルライブラリです。** プロダクト、セキュリティ、保守性、UX、アーキテクチャの5つのレンズから問いを投げかけ、対話を通じてものごとの本質を明らかにしてから、はじめてコードを書き始めます。
 
 ## ソクラテスと産婆術
 
@@ -24,8 +24,8 @@
 
 ## 特徴
 
-- **マルチ視点の問いかけ**: プロダクト、セキュリティ、保守性、UX、アーキテクチャの5つの視点から `codex exec` で問いをバッチ生成 — 見落としがちな観点を構造的に洗い出す
-- **Discovery Log**: 対話の記録をすべて永続ログに残し、以降のすべてのステージの信頼できる情報源とする — 問いかけの成果を失わない
+- **レンズベースの問いかけ**: プロダクト、セキュリティ、保守性、UX、アーキテクチャの5つのレンズから `codex exec` で問いをバッチ生成 — 見落としがちな観点を構造的に洗い出す
+- **Inquiry Record**: 対話の記録をすべて永続ログに残し、以降のすべてのステージの信頼できる情報源とする — 問いかけの成果を失わない
 - **Codex によるレビュー**: 設計・計画・実装のレビューを `codex exec` で実行 — 独立したモデルが客観的に評価する
 - **レビューループ**: Critical または Important な問題がなくなるまでレビューを繰り返す — 妥協しない
 
@@ -53,33 +53,33 @@ cp -r path/to/maieutics/skills/ .claude/skills/
 ## ワークフロー
 
 ```
-brainstorming → writing-plans → subagent-driven-development → finishing-a-development-branch
+inquiry → execution-planning → delegated-execution → closing-the-branch
 ```
 
-1. **brainstorming** — `codex exec` で複数視点からバッチ質問を生成。すべての回答を Discovery Log に記録。承認済みの Design Doc を作成。
+1. **inquiry** — `codex exec` で複数レンズからバッチ質問を生成。すべての回答を Inquiry Record に記録。承認済みの Design Synthesis を作成。
 
-2. **writing-plans** — 設計から小さな実装タスク（各2〜5分）を作成。`codex exec` でレビューし、修正ループを実行。TDD、DRY、YAGNI の原則に従う。
+2. **execution-planning** — 設計から小さな実装タスク（各2〜5分）を作成。`codex exec` でレビューし、修正ループを実行。TDD、DRY、YAGNI の原則に従う。
 
-3. **subagent-driven-development** — タスクごとに新しい Claude Code サブエージェントを起動。タスクごとに2段階レビュー（仕様準拠 + コード品質）。最終的に `codex exec` でマルチ視点の実装レビューを実施。
+3. **delegated-execution** — タスクごとに新しい Claude Code サブエージェントを起動。タスクごとに2段階レビュー（仕様準拠 + コード品質）。最終的に `codex exec` でレンズベースの実装レビューを実施。
 
-4. **finishing-a-development-branch** — テストを検証し、オプションを提示（マージ/PR/保持/破棄）、クリーンアップ。
+4. **closing-the-branch** — テストを検証し、オプションを提示（マージ/PR/保持/破棄）、クリーンアップ。
 
 ## カスタマイズ
 
-### 視点設定
+### レンズ設定
 
-プロジェクトルートに `.maieutics/multi-perspective.json` を作成して、視点、質問バッチサイズ、レビュー設定をカスタマイズできます。デフォルト設定は `skills/brainstorming/references/multi-perspective.default.json` を参照してください。
+プロジェクトルートに `.maieutics/lenses.json` を作成して、レンズ、質問バッチサイズ、レビュー設定をカスタマイズできます。デフォルト設定は `skills/inquiry/references/lenses.default.json` を参照してください。
 
 ## スキル一覧
 
 | スキル | 用途 |
 |---|---|
-| `brainstorming` | マルチ視点の質問生成、Discovery Log、Design Doc |
-| `writing-plans` | Codex レビューループ付き実装計画 |
-| `subagent-driven-development` | タスクごとのサブエージェント実行とレビューゲート |
-| `executing-plans` | 人間のチェックポイント付き別セッション計画実行 |
+| `inquiry` | レンズベースの質問生成、Inquiry Record、Design Synthesis |
+| `execution-planning` | Codex レビューループ付き実装計画 |
+| `delegated-execution` | タスクごとのサブエージェント実行とレビューゲート |
+| `guided-execution` | 人間のチェックポイント付き別セッション計画実行 |
 | `using-git-worktrees` | 隔離されたワークスペースのセットアップ |
-| `finishing-a-development-branch` | ブランチ完了ワークフロー |
+| `closing-the-branch` | ブランチ完了ワークフロー |
 
 ## ライセンス
 

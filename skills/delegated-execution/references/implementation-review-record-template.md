@@ -1,10 +1,10 @@
-# [Topic] Implementation Review Log
+# [Topic] Implementation Review Record
 
 **Date:** [YYYY-MM-DD]  
 **Topic Slug:** [topic-slug]  
-**Discovery Log:** `docs/plans/[YYYY-MM-DD-topic]-discovery.md`  
-**Design Doc:** `docs/plans/[YYYY-MM-DD-topic]-design.md`  
-**Plan Doc:** `docs/plans/[YYYY-MM-DD-topic]-plan.md`  
+**Inquiry Record:** `docs/plans/[YYYY-MM-DD-topic]-inquiry-record.md`  
+**Design Synthesis:** `docs/plans/[YYYY-MM-DD-topic]-design-synthesis.md`  
+**Execution Plan:** `docs/plans/[YYYY-MM-DD-topic]-execution-plan.md`  
 **Review Engine:** codex
 **Status:** [in-review | approved | superseded]
 

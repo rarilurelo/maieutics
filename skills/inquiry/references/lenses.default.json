@@ -6,7 +6,7 @@
     "Critical",
     "Important"
   ],
-  "shared_perspectives": {
+  "shared_lenses": {
     "product": {
       "title": "Product / Value",
       "goal": "Clarify user value, intended outcome, scope boundaries, and success criteria.",
@@ -19,7 +19,7 @@
         "Missing user value",
         "Scope creep",
         "Unclear success criteria",
-        "Features not justified by the discovery log"
+        "Features not justified by the inquiry record"
       ]
     },
     "security": {
@@ -84,8 +84,8 @@
     }
   },
   "stages": {
-    "brainstorming": {
-      "perspective_ids": [
+    "inquiry": {
+      "lens_ids": [
         "product",
         "security",
         "maintainability",
@@ -94,8 +94,8 @@
       ],
       "external_engine": "codex"
     },
-    "design_plan_review": {
-      "perspective_ids": [
+    "plan_review": {
+      "lens_ids": [
         "product",
         "security",
         "maintainability",
@@ -105,7 +105,7 @@
       "external_engine": "codex"
     },
     "implementation_review": {
-      "perspective_ids": [
+      "lens_ids": [
         "product",
         "security",
         "maintainability",
@@ -115,7 +115,7 @@
       "external_engine": "codex"
     },
     "feedback_reconciliation": {
-      "perspective_ids": [
+      "lens_ids": [
         "product",
         "security",
         "maintainability",

@@ -209,8 +209,8 @@ Ready to implement auth feature
 ## Integration
 
 **Called by:**
-- **brainstorming** (step 3) — REQUIRED at the start of brainstorming, before creating the discovery log or any other artifacts. This ensures all brainstorming artifacts live on the feature branch, never on main.
+- **inquiry** (step 3) — REQUIRED at the start of inquiry, before creating the inquiry record or any other artifacts. This ensures all inquiry artifacts live on the feature branch, never on main.
 - Any skill needing isolated workspace
 
 **Pairs with:**
-- **finishing-a-development-branch** - REQUIRED for cleanup after work complete
+- **closing-the-branch** - REQUIRED for cleanup after work complete

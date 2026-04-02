@@ -1,5 +1,5 @@
 ---
-name: using-maieutics
+name: maieutics-orientation
 description: Use when starting any conversation - establishes how to find and use maieutics skills, requiring Skill tool invocation before ANY response including clarifying questions
 ---
 
@@ -27,7 +27,7 @@ If CLAUDE.md or AGENTS.md says "don't use TDD" and a skill says "always use TDD,
 
 ## Codex Requirement
 
-Maieutics requires `codex exec` for multi-perspective question generation and reviews. There is no fallback. Ensure the Codex CLI is installed and available in your PATH before using maieutics skills.
+Maieutics requires `codex exec` for lenses question generation and reviews. There is no fallback. Ensure the Codex CLI is installed and available in your PATH before using maieutics skills.
 
 Question generation and design/plan/implementation reviews are executed via `codex exec` — not via subagents. This keeps the main Claude Code session clean and leverages a separate model for independent review.
 
@@ -45,7 +45,7 @@ Use the `Skill` tool. When you invoke a skill, its content is loaded and present
 digraph skill_flow {
     "User message received" [shape=doublecircle];
     "Building something new?" [shape=diamond];
-    "Invoke brainstorming skill" [shape=box];
+    "Invoke inquiry skill" [shape=box];
     "Might any skill apply?" [shape=diamond];
     "Invoke Skill tool" [shape=box];
     "Announce: 'Using [skill] to [purpose]'" [shape=box];
@@ -55,9 +55,9 @@ digraph skill_flow {
     "Respond (including clarifications)" [shape=doublecircle];
 
     "User message received" -> "Building something new?";
-    "Building something new?" -> "Invoke brainstorming skill" [label="yes"];
+    "Building something new?" -> "Invoke inquiry skill" [label="yes"];
     "Building something new?" -> "Might any skill apply?" [label="no"];
-    "Invoke brainstorming skill" -> "Might any skill apply?";
+    "Invoke inquiry skill" -> "Might any skill apply?";
 
     "Might any skill apply?" -> "Invoke Skill tool" [label="yes, even 1%"];
     "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
@@ -73,41 +73,41 @@ digraph skill_flow {
 
 ### Core Workflow (in order)
 
-1. **maieutics:brainstorming** — Multi-perspective question generation via `codex exec`. Explores user intent through batched questions from 5 perspectives (Product, Security, Maintainability, UX, Architecture). Produces a Discovery Log and Design Doc.
+1. **maieutics:inquiry** — Lenses-based question generation via `codex exec`. Explores user intent through batched questions from 5 lenses (Product, Security, Maintainability, UX, Architecture). Produces an Inquiry Record and Design Synthesis.
 
-2. **maieutics:writing-plans** — Creates bite-sized implementation plans from approved designs. Reviews plans via `codex exec` with fix loops until no Critical/Important issues remain.
+2. **maieutics:execution-planning** — Creates bite-sized implementation plans from approved design syntheses. Reviews plans via `codex exec` with fix loops until no Critical/Important issues remain.
 
-3. **maieutics:subagent-driven-development** — Executes plans by dispatching fresh implementation workers (Agent tool) per task. Two-stage per-task review (spec compliance + code quality). Final multi-perspective implementation review via `codex exec`.
+3. **maieutics:delegated-execution** — Executes plans by dispatching fresh implementation workers (Agent tool) per task. Two-stage per-task review (spec compliance + code quality). Final lenses implementation review via `codex exec`.
 
-4. **maieutics:executing-plans** — Alternative to subagent-driven-development for separate-session execution with human checkpoints between batches.
+4. **maieutics:guided-execution** — Alternative to delegated-execution for separate-session execution with human checkpoints between batches.
 
 ### Supporting Skills
 
 5. **maieutics:using-git-worktrees** — Creates isolated git worktrees for feature work. Auto-detects project setup, verifies clean test baseline.
 
-6. **maieutics:finishing-a-development-branch** — Guides branch completion: verify tests, present 4 options (merge/PR/keep/discard), execute chosen workflow, clean up worktree.
+6. **maieutics:closing-the-branch** — Guides branch completion: verify tests, present 4 options (merge/PR/keep/discard), execute chosen workflow, clean up worktree.
 
 ### Feedback Loop
 
-7. **maieutics:reconciling-feedback** — Triages external feedback (staging tests, UAT, code review, bug reports) by classifying each item across 5 perspectives via `codex exec`. Promotes accepted changes to the Discovery Log and routes to the appropriate pipeline stage (brainstorming for scope changes, writing-plans for design/implementation fixes).
+7. **maieutics:feedback-reconciliation** — Triages external feedback (staging tests, UAT, code review, bug reports) by classifying each item across 5 lenses via `codex exec`. Promotes accepted changes to the Inquiry Record and routes to the appropriate pipeline stage (inquiry for scope changes, execution-planning for design/implementation fixes).
 
 ### Typical Flow
 
 ```
-brainstorming → using-git-worktrees → writing-plans → subagent-driven-development → finishing-a-development-branch
+inquiry → using-git-worktrees → execution-planning → delegated-execution → closing-the-branch
      ^                                       ^                                                |
      |                                       |                                                v
-     +-------------- reconciling-feedback ---+------------------------------- (external feedback arrives)
+     +-------------- feedback-reconciliation ---+------------------------------- (external feedback arrives)
 ```
 
 ## Skill Priority
 
 When multiple skills could apply, use this order:
 
-1. **Process skills first** (brainstorming) — these determine HOW to approach the task
+1. **Process skills first** (inquiry) — these determine HOW to approach the task
 2. **Implementation skills second** — these guide execution
 
-"Let's build X" → brainstorming first, then implementation skills.
+"Let's build X" → inquiry first, then implementation skills.
 
 ## Red Flags
 
@@ -129,7 +129,7 @@ These thoughts mean STOP — you're rationalizing:
 
 ## Skill Types
 
-**Rigid** (brainstorming, writing-plans): Follow exactly. Don't adapt away discipline.
+**Rigid** (inquiry, execution-planning): Follow exactly. Don't adapt away discipline.
 
 **Flexible** (using-git-worktrees): Adapt principles to context.
 

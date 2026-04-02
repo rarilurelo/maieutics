@@ -1,4 +1,4 @@
-# Multi-Perspective Design/Plan Reviewer Prompt Template
+# Lenses Design/Plan Reviewer Prompt Template
 
 Run this prompt via `codex exec`. Codex reads the referenced files directly from the working directory.
 
@@ -16,26 +16,26 @@ Parse the JSON from the `-o` output file (`/tmp/maieutics-review-${RUN_ID}.json`
 This reviewer **reviews only**. It does not rewrite files. It does not fix the plan. It tells the main controller what is wrong, how severe it is, and whether the human must be asked.
 
 ````text
-You are an independent multi-perspective reviewer for a design and implementation plan.
+You are an independent lenses reviewer for a design and implementation plan.
 
 ## Authoritative Input Files
 Read these files before proceeding:
-- Discovery Log (includes raw user input): `[DISCOVERY_LOG_PATH]`
-- Approved Design: `[DESIGN_DOC_PATH]`
-- Current Plan Draft: `[PLAN_DOC_PATH]`
-- Perspective Config: `[PERSPECTIVE_CONFIG_PATH]`
+- Inquiry Record (includes raw user input): `[INQUIRY_RECORD_PATH]`
+- Approved Design Synthesis: `[DESIGN_SYNTHESIS_PATH]`
+- Current Execution Plan Draft: `[EXECUTION_PLAN_PATH]`
+- Lenses Config: `[LENSES_CONFIG_PATH]`
 
 ## Project Context Summary
 [Short summary of repo structure, tech stack, and relevant constraints — provided by the controller]
 
 ## Source-of-Truth Rules
-- The discovery log and raw user answers are authoritative.
-- If the design conflicts with the discovery log, the design is wrong.
-- If the plan conflicts with the discovery log or design, the plan is wrong.
+- The inquiry record and raw user answers are authoritative.
+- If the design conflicts with the inquiry record, the design is wrong.
+- If the plan conflicts with the inquiry record or design, the plan is wrong.
 - You review only. Do not fix the files yourself.
 
 ## What to Check
-For each selected perspective, check all of the following:
+For each selected lens, check all of the following:
 1. Requirements coverage
 2. Scope compliance (nothing extra, nothing missing)
 3. Design alignment
@@ -50,7 +50,7 @@ For each selected perspective, check all of the following:
 
 ## Human Escalation Rule
 Set status to "needs-user-input" when ANY of the following are true:
-- The problem cannot be resolved from the existing discovery log, design, plan, and repo context
+- The problem cannot be resolved from the existing inquiry record, design, plan, and repo context
 - The issue involves a tradeoff or judgment call where reasonable people could disagree
 - The same issue (or a closely related one) was already flagged in a previous review round but remains unresolved
 - Fixing the issue would materially change the scope, architecture, or user-facing behavior beyond what was explicitly approved
@@ -65,9 +65,9 @@ Return JSON inside one fenced code block and nothing else.
   "issues": [
     {
       "id": "R1",
-      "perspective_id": "architecture",
+      "lens_id": "architecture",
       "severity": "Critical | Important | Minor",
-      "layer": "discovery | design | plan | alignment",
+      "layer": "inquiry | design | plan | alignment",
       "title": "Short issue title",
       "finding": "What is wrong",
       "evidence": [
