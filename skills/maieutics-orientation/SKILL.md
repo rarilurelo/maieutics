@@ -77,7 +77,7 @@ digraph skill_flow {
 
 2. **maieutics:execution-planning** — Creates bite-sized implementation plans from approved design syntheses. Reviews plans via `codex exec` with fix loops until no Critical/Important issues remain.
 
-3. **maieutics:delegated-execution** — Executes plans by dispatching fresh implementation workers (Agent tool) per task. Two-stage per-task review (spec compliance + code quality). Final lenses implementation review via `codex exec`.
+3. **maieutics:delegated-execution** — Executes plans by dispatching fresh `codex exec` sessions per task. Two-stage per-task review (spec compliance + code quality). Final lenses implementation review via `codex exec`.
 
 4. **maieutics:guided-execution** — Alternative to delegated-execution for separate-session execution with human checkpoints between batches.
 
