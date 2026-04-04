@@ -63,7 +63,7 @@ inquiry → using-git-worktrees → execution-planning → delegated-execution �
 
 3. **execution-planning** — Creates bite-sized implementation tasks (2-5 min each) from the design. Reviews the plan via `codex exec` with fix loops. TDD, DRY, YAGNI.
 
-4. **delegated-execution** — Dispatches a fresh Claude Code subagent per task. Two-stage review per task (spec compliance + code quality). Final lenses implementation review via `codex exec`.
+4. **delegated-execution** — Dispatches a fresh `codex exec` session per task. Two-stage review per task (spec compliance + code quality). Final lenses implementation review via `codex exec`.
 
 5. **closing-the-branch** — Verifies tests, presents options (merge/PR/keep/discard), cleans up.
 
@@ -79,7 +79,7 @@ Create `.maieutics/lenses.json` in your project root to customize lenses, displa
 |---|---|
 | `inquiry` | Per-lens question generation, Inquiry Record, Design Synthesis |
 | `execution-planning` | Implementation plans with codex-powered review loops |
-| `delegated-execution` | Subagent-per-task execution with review gates |
+| `delegated-execution` | Codex-per-task execution with review gates |
 | `guided-execution` | Separate-session plan execution with human checkpoints |
 | `using-git-worktrees` | Isolated workspace setup |
 | `closing-the-branch` | Branch completion workflow |
