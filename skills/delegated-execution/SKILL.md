@@ -1,20 +1,22 @@
 ---
 name: delegated-execution
-description: "Use when executing implementation plans with independent tasks in the current session. This version adds authoritative inquiry context and a final lenses implementation review loop."
+description: "Use when executing implementation plans with independent tasks via `codex exec` sessions. This version adds authoritative inquiry context and a final lenses implementation review loop."
 ---
 
 # Delegated Execution
 
-Execute the plan by dispatching a **fresh implementation worker per task**, with standard per-task review after each task:
+Execute the plan by dispatching a **fresh `codex exec` session per task**, with standard per-task review after each task:
 
 1. spec compliance review
 2. code quality review
+
+This is a one-shot execution model — Codex workers run non-interactively and return structured JSON. If a worker encounters a blocker, it reports the reason via JSON status rather than asking interactive questions; the controller then decides whether to retry, modify the prompt, or escalate to the user.
 
 After all planned tasks are complete, run a **final lenses implementation review** via `codex exec`. If Codex finds Critical or Important issues, implementation continues until those issues are fixed. If Codex says the remaining blockers require the human, ask grouped user questions, record the outcome, confirm any inquiry record changes with the user, and continue.
 
 ## Core Principle
 
-Fresh worker per task + standard per-task reviews + final lenses implementation review = higher quality, less context pollution, better alignment with what the human actually asked for.
+Fresh `codex exec` session per task + standard per-task reviews + final lenses implementation review = higher quality, less context pollution, better alignment with what the human actually asked for.
 
 ## Authoritative Inputs
 
@@ -48,27 +50,102 @@ If tasks are tightly coupled or you want human checkpoints between batches, use 
 2. Extract all tasks with full text and context
 3. Load the inquiry record and approved design synthesis
 4. Create TodoWrite entries for all tasks
-5. Start an `Carried Findings` block for facts learned during implementation that later tasks should inherit
+5. Start a `Carried Findings` block for facts learned during implementation that later tasks should inherit
 
 ### Per Task Loop
 
 For each task:
 
-1. Dispatch a fresh implementation worker using [implementer-prompt.md](implementer-prompt.md)
-2. Give the worker:
+1. **Record pre-task HEAD:** run `git rev-parse HEAD` and store the hash for rollback
+2. **Run the implementer** via `codex exec` with the prompt from [implementer-prompt.md](implementer-prompt.md), substituting all placeholders. Give the worker:
    - the full task text
    - relevant inquiry record excerpts
    - relevant design context
    - carried findings from earlier tasks
    - repo context needed for the task
-3. If the worker asks questions, answer them before allowing work to continue
-4. Worker implements, tests, commits, self-reviews
-5. Dispatch spec compliance review using [spec-reviewer-prompt.md](spec-reviewer-prompt.md)
-6. If spec review fails, send the issues back to the implementation worker and repeat until spec compliant
-7. Dispatch code quality review using [code-quality-reviewer-prompt.md](code-quality-reviewer-prompt.md)
-8. If code quality review finds blocking issues, send them back to the implementation worker and repeat until clean
-9. Record any durable discoveries from the worker's report and carry them into later tasks
-10. Mark the task complete in TodoWrite
+3. **Parse JSON output** from the `-o` file
+4. **If `status: "blocked"`:** reset to pre-task HEAD (`git reset --hard <hash> && git clean -fd`), analyze `blocker_reason`, optionally ask the user for clarification, then relaunch the implementer with a modified prompt that addresses the blocker
+5. **If `status: "completed"`:** proceed to spec review
+6. **Run spec compliance review** via `codex exec` with the prompt from [spec-reviewer-prompt.md](spec-reviewer-prompt.md) (read-only)
+7. **If spec review `non-compliant`:** reset to pre-task HEAD (`git reset --hard <hash> && git clean -fd`), relaunch the implementer with the spec review issues included as fix instructions in the prompt
+8. **Run code quality review** via `codex exec` with the prompt from [code-quality-reviewer-prompt.md](code-quality-reviewer-prompt.md) (read-only)
+9. **If code quality review `issues-found` with Critical or Important severity:** reset to pre-task HEAD (`git reset --hard <hash> && git clean -fd`), relaunch the implementer with the code quality issues included as fix instructions in the prompt
+10. **Record carried findings** from the implementer's `project_discoveries` and carry them into later tasks
+11. **Mark the task complete** in TodoWrite
+
+#### Implementer — Exact Command
+
+**IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
+
+```bash
+RUN_ID=$(uuidgen) && codex exec --full-auto -o /tmp/maieutics-impl-${RUN_ID}.json - <<'PROMPT'
+<substituted prompt content from implementer-prompt.md>
+PROMPT
+echo "OUTPUT_FILE=/tmp/maieutics-impl-${RUN_ID}.json"
+```
+
+- `RUN_ID=$(uuidgen)` — generates a unique ID per invocation to avoid stale file collisions across sessions
+- `--full-auto` — non-interactive execution with sandboxed auto-approval
+- `-o /tmp/maieutics-impl-${RUN_ID}.json` — saves the last message to a uniquely-named file for reliable parsing
+- `-` — read prompt from stdin (use heredoc)
+
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs). Generate a new `RUN_ID` for each invocation (including retries and fix-loop relaunches).
+
+**NEVER use glob patterns (e.g. `ls /tmp/maieutics-impl-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
+
+#### Spec Reviewer — Exact Command
+
+**IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
+
+```bash
+RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-spec-review-${RUN_ID}.json - <<'PROMPT'
+<substituted prompt content from spec-reviewer-prompt.md>
+PROMPT
+echo "OUTPUT_FILE=/tmp/maieutics-spec-review-${RUN_ID}.json"
+```
+
+- `RUN_ID=$(uuidgen)` — generates a unique ID per invocation to avoid stale file collisions across sessions
+- `--full-auto` — non-interactive execution with sandboxed auto-approval
+- `-s read-only` — reviewer only reads files, never writes
+- `-o /tmp/maieutics-spec-review-${RUN_ID}.json` — saves the last message to a uniquely-named file for reliable parsing
+- `-` — read prompt from stdin (use heredoc)
+
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs). Generate a new `RUN_ID` for each invocation (including retries and subsequent review rounds).
+
+**NEVER use glob patterns (e.g. `ls /tmp/maieutics-spec-review-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
+
+#### Code Quality Reviewer — Exact Command
+
+**IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
+
+```bash
+RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-quality-review-${RUN_ID}.json - <<'PROMPT'
+<substituted prompt content from code-quality-reviewer-prompt.md>
+PROMPT
+echo "OUTPUT_FILE=/tmp/maieutics-quality-review-${RUN_ID}.json"
+```
+
+- `RUN_ID=$(uuidgen)` — generates a unique ID per invocation to avoid stale file collisions across sessions
+- `--full-auto` — non-interactive execution with sandboxed auto-approval
+- `-s read-only` — reviewer only reads files, never writes
+- `-o /tmp/maieutics-quality-review-${RUN_ID}.json` — saves the last message to a uniquely-named file for reliable parsing
+- `-` — read prompt from stdin (use heredoc)
+
+Parse the output from the `-o` file, not from stdout (stdout contains progress logs). Generate a new `RUN_ID` for each invocation (including retries and subsequent review rounds).
+
+**NEVER use glob patterns (e.g. `ls /tmp/maieutics-quality-review-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
+
+### Per-Task Review Loop Limit
+
+Per-task implementer/spec/code-quality fix loops are capped at **3 rounds per task**. A "round" is one implementer launch followed by its spec review and code quality review.
+
+After 3 rounds with unresolved Critical or Important issues: stop and escalate to the user.
+
+- Present the unresolved issues clearly
+- Ask the user for direction on each remaining issue
+- Record the answers and continue with a final implementer launch incorporating the user's decisions
+
+This mirrors the existing final lenses review loop limit and prevents infinite fix loops where each fix introduces new issues.
 
 ### Final Lenses Implementation Review
 
@@ -76,12 +153,12 @@ After all plan tasks are complete:
 
 1. Save or update `docs/plans/YYYY-MM-DD-<topic>-implementation-review-record.md` using [references/implementation-review-record-template.md](references/implementation-review-record-template.md)
 2. Run `codex exec` with the prompt from [implementation-reviewer-prompt.md](implementation-reviewer-prompt.md), substituting:
-   - `[INQUIRY_RECORD_PATH]` → actual path to the inquiry record
-   - `[DESIGN_SYNTHESIS_PATH]` → actual path to the design synthesis
-   - `[EXECUTION_PLAN_PATH]` → actual path to the execution plan
-   - `[LENSES_CONFIG_PATH]` → `.maieutics/lenses.json` or the bundled default
-   - `Carried Findings` → bullet list of durable discoveries from task workers
-   - `Current Implementation State` → branch context, diff summary, test results, used only as an entry point for direct repo inspection
+   - `[INQUIRY_RECORD_PATH]` -> actual path to the inquiry record
+   - `[DESIGN_SYNTHESIS_PATH]` -> actual path to the design synthesis
+   - `[EXECUTION_PLAN_PATH]` -> actual path to the execution plan
+   - `[LENSES_CONFIG_PATH]` -> `.maieutics/lenses.json` or the bundled default
+   - `Carried Findings` -> bullet list of durable discoveries from task workers
+   - `Current Implementation State` -> branch context, diff summary, test results, used only as an entry point for direct repo inspection
 3. Parse the returned JSON and act on the result
 
 #### Exact Command
@@ -177,16 +254,17 @@ You MUST NOT finish the branch while any **Critical** or **Important** issue fro
 
 ### vs. Manual Execution
 
-- Fresh context per task
-- Better TDD discipline
-- Durable carried findings can be passed forward
-- Clarifying questions happen before or during work, not after
+- Fresh context per task — each `codex exec` session starts clean, avoiding context pollution
+- Independent review — spec and code quality reviewers run in isolated read-only sessions
+- Durable carried findings passed forward across tasks
+- Blockers reported via JSON status, not mid-stream questions
 - Final implementation gets checked against inquiry, design, and plan — not just task text
 
 ### vs. Guided Execution
 
-- Same session, faster iteration
-- Automatic review checkpoints
+- Same session, faster iteration — controller orchestrates `codex exec` workers without leaving the session
+- Automatic review checkpoints after every task
+- Pre-task HEAD recording enables clean rollback and retry on any failure
 - Final whole-feature review before branch completion
 
 ## Red Flags
@@ -197,10 +275,11 @@ Never do these:
 - Ignore the inquiry record or treat it as optional
 - Skip spec review or code quality review for a task
 - Skip the final lenses implementation review
-- Let Codex edit code directly
+- Let Codex run outside the feature worktree
+- Let Codex install dependencies or push to remote
 - Proceed with unresolved Critical or Important review issues
 - Make workers read the plan file themselves when you can provide the exact task text
-- Ignore worker questions or reviewer escalation questions
+- Ignore worker blocker status or reviewer escalation questions
 - Finish the branch before the final review loop is clean
 - Accept review findings that are not backed by inspected repo evidence
 - Update the inquiry record during review without explicit user confirmation

@@ -236,7 +236,7 @@ After saving the plan and passing review, offer execution choice:
 
 **"Plan complete and saved to `docs/plans/<topic>-execution-plan.md`. The design/plan review loop is clean. Two execution options:**
 
-1. **Delegated Execution (this session)** — fresh implementation worker per task, standard per-task review, then a final lenses implementation review
+1. **Delegated Execution (this session)** — fresh `codex exec` session per task, standard per-task review, then a final lenses implementation review
 2. **Parallel Session (separate)** — open a new session with `guided-execution`
 
 **Which approach?"**
