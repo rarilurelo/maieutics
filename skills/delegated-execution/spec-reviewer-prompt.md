@@ -1,50 +1,76 @@
 # Spec Compliance Review Worker Prompt Template
 
-Use this template when dispatching a spec compliance reviewer worker.
+Run this prompt via `codex exec`. The reviewer is read-only — it must not modify any files.
 
-**Purpose:** Verify the implementation matches what was requested — nothing more, nothing less.
+**Run in the foreground (do NOT use `run_in_background`):**
+
+```bash
+RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-spec-review-${RUN_ID}.json - <<'PROMPT'
+<paste the prompt below with [PLACEHOLDERS] substituted>
+PROMPT
+echo "OUTPUT_FILE=/tmp/maieutics-spec-review-${RUN_ID}.json"
+```
+
+Parse the JSON from the `-o` output file (`/tmp/maieutics-spec-review-${RUN_ID}.json`), not from stdout. Generate a new `RUN_ID` for each invocation. **Never use glob patterns to find the output file.**
 
 ````text
-Task tool (general-purpose):
-description: "Review spec compliance for Task N"
-prompt: |
-  You are reviewing whether an implementation matches its specification.
+You are reviewing whether an implementation matches its specification.
 
-  ## What Was Requested
-  [FULL TEXT of task requirements]
+## What Was Requested
+[FULL TEXT of task requirements - paste it here; do not make the reviewer read the file]
 
-  ## Authoritative Context
-  - Inquiry record / raw user input: [PASTE relevant excerpt and/or path]
-  - Approved design synthesis: [PASTE relevant excerpt and/or path]
-  - Approved execution plan: [PASTE relevant excerpt and/or path]
-  - Carried findings: [PASTE relevant excerpt if relevant]
+## Authoritative Context
+- Inquiry record / raw user input: [PASTE relevant excerpt and/or path]
+- Approved design synthesis: [PASTE relevant excerpt and/or path]
+- Approved execution plan: [PASTE relevant excerpt and/or path]
+- Carried findings: [PASTE relevant excerpt if relevant]
 
-  ## What Implementer Claims They Built
-  [From the implementation worker's report]
+## What Implementer Claims They Built
+[From the implementation worker's report]
 
-  ## CRITICAL: Do Not Trust the Report
-  The worker may be incomplete, inaccurate, or optimistic. Verify independently.
+## CRITICAL: Do Not Trust the Report
+The implementer may be incomplete, inaccurate, or optimistic. Do not trust the implementer's claimed output. Verify independently by reading the actual source code.
 
-  ## Do Not
-  - Take their word for what they implemented
-  - Trust their completeness claims
-  - Ignore conflicts with the inquiry record or design synthesis
+## Do Not
+- Take their word for what they implemented
+- Trust their completeness claims
+- Ignore conflicts with the inquiry record or design synthesis
+- Report compliance without reading the code yourself
 
-  ## Do
-  - Read the actual code they wrote
-  - Compare implementation to requirements line by line
-  - Check for missing pieces
-  - Check for extra work
-  - Flag conflicts between task text and authoritative context
+## Do
+- Explore the repository and read the actual code the implementer wrote
+- Compare the implementation to requirements line by line
+- Check for missing pieces that the spec requires but the code lacks
+- Check for extra or overbuilt work that goes beyond the spec
+- Flag conflicts between task text and authoritative context
+- Verify tests exist and cover the specified behavior
 
-  ## Your Job
-  Verify:
-  - missing requirements
-  - extra or overbuilt work
-  - misunderstandings
-  - conflicts with authoritative user answers or design intent
+## Your Job
+Read the actual code in the repository. Navigate the file tree, open files, and compare what you find against the requirements above. Do not rely solely on the implementer's report.
 
-  Report one of:
-  - ✅ Spec compliant
-  - ❌ Issues found: [list specifically what's missing, extra, or conflicting, with file:line references]
+Verify:
+- missing requirements (spec says X, code does not do X)
+- extra or overbuilt work (code does Y, spec never asked for Y)
+- misunderstandings (code does something different from what the spec intended)
+- conflicts with authoritative user answers or design intent
+
+Work from: [directory]
+
+## Output
+Return JSON inside one fenced code block and nothing else.
+
+```json
+{
+  "status": "compliant | non-compliant",
+  "issues": [
+    {
+      "type": "missing | extra | conflict | misunderstanding",
+      "description": "specific issue",
+      "file_path": "path/to/file",
+      "line": 42,
+      "fix_suggestion": "what should be changed"
+    }
+  ]
+}
+```
 ````
