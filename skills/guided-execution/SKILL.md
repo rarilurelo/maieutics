@@ -11,7 +11,7 @@ Load plan, review critically, execute all tasks, report when complete.
 
 **Announce at start:** "I'm using the guided-execution skill to implement this plan."
 
-**Note:** Tell your human partner that Maieutics works much better with access to subagents. The quality of its work will be significantly higher if run on a platform with subagent support (such as Claude Code or Codex). If subagents are available, use maieutics:delegated-execution instead of this skill.
+**Note:** Tell your human partner that Maieutics works much better with Codex CLI available. The quality of its work will be significantly higher when `codex exec` can be used for implementation delegation. If Codex CLI is available, use maieutics:delegated-execution instead of this skill.
 
 ## The Process
 
