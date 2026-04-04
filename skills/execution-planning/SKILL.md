@@ -29,6 +29,8 @@ You MUST read and use all of these:
 
 The inquiry record is authoritative. Confirmed assumptions are part of that authority. Working assumptions are unresolved until explicitly confirmed or handled in the plan. Invalidated assumptions must not be used. If the design conflicts with the inquiry record, update the design. Do NOT plan against stale assumptions.
 
+Review findings are **not** authoritative on their own. During review loops, treat "user answer captured" and "inquiry record updated" as separate events. You may record review findings, user answers, and proposed inquiry changes in the review record immediately, but you MUST NOT update the inquiry record until the user explicitly confirms the exact proposed changes.
+
 ## Output Files
 
 **Plan:**
@@ -47,7 +49,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Save the plan draft** — use the required filename
 4. **Run design/plan review via codex exec** — use [design-plan-reviewer-prompt.md](design-plan-reviewer-prompt.md), passing file paths to the inquiry record, design synthesis, execution plan, and lenses config
 5. **Fix issues yourself** — update design and/or plan when the reviewer returns Critical or Important issues that can be resolved from existing context
-6. **Ask grouped user questions when truly needed** — if the reviewer says the issue cannot be resolved without the human, ask the user all pending blocker questions in one message, making the triggering assumption or authority conflict explicit, append answers to the inquiry record, then update design and/or plan
+6. **Ask grouped user questions when truly needed** — if the reviewer says the issue cannot be resolved without the human, ask the user all pending blocker questions in one message, making the triggering assumption or authority conflict explicit, record the answers verbatim in the review record, draft inquiry record update candidates, ask for explicit confirmation, and only then update the inquiry record before updating design and/or plan
 7. **Repeat the review loop** — continue until no Critical or Important issues remain
 8. **Commit design, plan, and review record** — they are part of the durable workflow state
 9. **Offer execution choice** — delegated-execution in this session or guided-execution in a separate session
@@ -158,14 +160,35 @@ Parse the output from the `-o` file, not from stdout (stdout contains progress l
 
 **NEVER use glob patterns (e.g. `ls /tmp/maieutics-review-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
 
+### Inquiry Record Confirmation Gate
+
+Whenever a review round suggests changing the inquiry record:
+
+1. Append the review findings, blocker questions, and any user answers to the plan review record first
+2. Draft a batch of `inquiry_record_update_candidates` containing:
+   - target section
+   - change type
+   - exact text to add or replace
+   - related review issue IDs
+   - rationale
+3. Present the batch to the user with this exact confirmation lead-in:
+   - `以下を inquiry record に反映してよいですか`
+4. Apply the inquiry record update only if the user explicitly approves the batch
+5. If the user supplies revised wording, replace the draft candidates with the user's revised wording and re-present the full batch for confirmation
+6. If the user declines or leaves the confirmation unresolved, leave the inquiry record unchanged and stop the review loop in a pending-confirmation state
+
+Do not treat answering a blocker question as implicit permission to update the inquiry record.
+
 ### Review Loop Limit
 
 The review loop runs **at most 3 rounds**. If Critical or Important issues remain after 3 rounds, stop self-fixing and escalate to the user:
 
 - Present the unresolved issues clearly
 - Ask the user for direction on each remaining issue
-- Append answers to the inquiry record
-- Apply the user's decisions, then run one final review
+- Record the answers in the plan review record
+- Draft inquiry record update candidates and ask for explicit confirmation before any inquiry record edit
+- Only after the inquiry record update batch is explicitly confirmed, apply the user's decisions and run one final review
+- If confirmation remains unresolved or declined, stop in a pending-confirmation state without re-running review
 
 This prevents infinite fix loops where each fix introduces new issues.
 
@@ -176,16 +199,19 @@ This prevents infinite fix loops where each fix introduces new issues.
 
 **If status is `needs-fix`:**
 - Fix the design and/or plan yourself
-- Update the inquiry record's assumption state if the reviewer identified stale, unresolved, or invalidated assumptions
+- Record any pending inquiry record changes in the plan review record only
 - Append the review round to the review record
 - Re-run the external review (respecting the 3-round limit)
 
 **If status is `needs-user-input`:**
 - Ask the user the grouped blocker questions
-- Append answers verbatim to the inquiry record
-- Update the assumption state based on the user's answers
-- Update design and/or plan
-- Re-run the external review
+- Append answers verbatim to the review record
+- Draft inquiry record update candidates
+- Ask `以下を inquiry record に反映してよいですか`
+- Only if the user explicitly confirms, update the inquiry record and its assumption state
+- If the user declines or revises the text, keep the inquiry record unchanged until the batch is explicitly confirmed
+- Only after confirmation, update design and/or plan
+- Only after confirmation, re-run the external review
 
 ### Blocking Rule
 
@@ -199,6 +225,7 @@ You MUST NOT hand the plan off for implementation while any **Critical** or **Im
 - Complete code in the plan (not "add validation")
 - Exact commands with expected output
 - Inquiry record is authoritative
+- Inquiry record updates during review require explicit user confirmation
 - Review findings must be backed by repo evidence, not just summaries
 - Codex only reviews; it does not fix
 - DRY, YAGNI, TDD, frequent commits

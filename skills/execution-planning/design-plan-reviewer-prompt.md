@@ -41,6 +41,7 @@ Read these files before proceeding:
 - The short project summary is only an entry point. You MUST inspect the repository before reaching conclusions.
 - If the design conflicts with the inquiry record or confirmed assumptions, the design is wrong.
 - If the plan conflicts with the inquiry record, confirmed assumptions, or design, the plan is wrong.
+- If you think the inquiry record should change, emit a proposed update candidate instead of treating that change as already accepted.
 - You review only. Do not fix the files yourself.
 
 ## What to Check
@@ -67,6 +68,8 @@ Set status to "needs-user-input" when ANY of the following are true:
 - The issue exists because a working assumption needs explicit user confirmation or a confirmed assumption must be overturned
 
 ## Output
+`inquiry_record_update_candidates` are proposals for the controller. They are NOT authoritative and MUST NOT be treated as approved inquiry record edits until the user explicitly confirms them.
+
 Return JSON inside one fenced code block and nothing else.
 
 ```json
@@ -84,6 +87,18 @@ Return JSON inside one fenced code block and nothing else.
       "Invalidated assumptions still referenced by the design or plan"
     ]
   },
+  "inquiry_record_update_candidates": [
+    {
+      "section": "Settled Decisions | Assumptions > Confirmed Assumptions | Assumptions > Working Assumptions | Assumptions > Invalidated Assumptions | Open Questions",
+      "change_type": "append | replace | supersede | move",
+      "draft_text": "Exact text the controller can propose to the user for the inquiry record",
+      "rationale": "Why this inquiry record change is being proposed",
+      "related_issue_ids": [
+        "R1"
+      ],
+      "requires_confirmation": true
+    }
+  ],
   "issues": [
     {
       "id": "R1",

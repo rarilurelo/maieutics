@@ -10,7 +10,7 @@ Execute the plan by dispatching a **fresh implementation worker per task**, with
 1. spec compliance review
 2. code quality review
 
-After all planned tasks are complete, run a **final lenses implementation review** via `codex exec`. If Codex finds Critical or Important issues, implementation continues until those issues are fixed. If Codex says the remaining blockers require the human, ask grouped user questions, update the authoritative artifacts, and continue.
+After all planned tasks are complete, run a **final lenses implementation review** via `codex exec`. If Codex finds Critical or Important issues, implementation continues until those issues are fixed. If Codex says the remaining blockers require the human, ask grouped user questions, record the outcome, confirm any inquiry record changes with the user, and continue.
 
 ## Core Principle
 
@@ -26,6 +26,8 @@ Before executing any task, identify and keep track of:
 - Lenses config: `.maieutics/lenses.json` if present, otherwise `../inquiry/references/lenses.default.json`
 
 The inquiry record, user answers, and confirmed assumptions are authoritative. Working assumptions are unresolved until explicitly handled or confirmed. Invalidated assumptions must not be used. If the plan later proves inconsistent with them, update the plan and implement against the corrected version.
+
+Review findings are **not** authoritative on their own. During review loops, treat "user answer captured" and "inquiry record updated" as separate events. You may record review findings, user answers, and proposed inquiry changes in the implementation review record immediately, but you MUST NOT update the inquiry record until the user explicitly confirms the exact proposed changes.
 
 ## When to Use
 
@@ -103,14 +105,35 @@ Parse the output from the `-o` file, not from stdout (stdout contains progress l
 
 **NEVER use glob patterns (e.g. `ls /tmp/maieutics-impl-review-*.json`) to locate the output file.** Always use the exact `${RUN_ID}` path printed at the end of the command.
 
+### Inquiry Record Confirmation Gate
+
+Whenever a review round suggests changing the inquiry record:
+
+1. Append the review findings, blocker questions, and any user answers to the implementation review record first
+2. Draft a batch of `inquiry_record_update_candidates` containing:
+   - target section
+   - change type
+   - exact text to add or replace
+   - related review issue IDs
+   - rationale
+3. Present the batch to the user with this exact confirmation lead-in:
+   - `以下を inquiry record に反映してよいですか`
+4. Apply the inquiry record update only if the user explicitly approves the batch
+5. If the user supplies revised wording, replace the draft candidates with the user's revised wording and re-present the full batch for confirmation
+6. If the user declines or leaves the confirmation unresolved, leave the inquiry record unchanged and stop the review loop in a pending-confirmation state
+
+Do not treat answering a blocker question as implicit permission to update the inquiry record.
+
 ### Review Loop Limit
 
 The final review loop runs **at most 3 rounds**. If Critical or Important issues remain after 3 rounds, stop self-fixing and escalate to the user:
 
 - Present the unresolved issues clearly
 - Ask the user for direction on each remaining issue
-- Append answers to the inquiry record
-- Apply the user's decisions, then run one final review
+- Record the answers in the implementation review record
+- Draft inquiry record update candidates and ask for explicit confirmation before any inquiry record edit
+- Only after the inquiry record update batch is explicitly confirmed, apply the user's decisions and run one final review
+- If confirmation remains unresolved or declined, stop in a pending-confirmation state without re-running review
 
 This prevents infinite fix loops where each fix introduces new issues.
 
@@ -121,18 +144,21 @@ This prevents infinite fix loops where each fix introduces new issues.
 
 **If status is `needs-fix`:**
 - Convert the issues into follow-up implementation work
-- Update the inquiry record's assumption state if the reviewer identified stale, unresolved, or invalidated assumptions
+- Record any pending inquiry record changes in the implementation review record only
 - If the findings reveal a design/plan mismatch, update the design and/or plan first
 - Dispatch the implementation worker to fix the issues
 - Re-run the final lenses implementation review (respecting the 3-round limit)
 
 **If status is `needs-user-input`:**
 - Ask the user all blocker questions in one grouped message
-- Append the answers to the inquiry record
-- Update the assumption state based on the user's answers
-- Update design and/or plan if needed
-- Implement the resulting changes
-- Re-run the final lenses implementation review
+- Append the answers verbatim to the implementation review record
+- Draft inquiry record update candidates
+- Ask `以下を inquiry record に反映してよいですか`
+- Only if the user explicitly confirms, update the inquiry record and its assumption state
+- If the user declines or revises the text, keep the inquiry record unchanged until the batch is explicitly confirmed
+- Only after confirmation, update design and/or plan if needed
+- Only after confirmation, implement the resulting changes
+- Only after confirmation, re-run the final lenses implementation review
 
 ## Blocking Rule
 
@@ -177,3 +203,4 @@ Never do these:
 - Ignore worker questions or reviewer escalation questions
 - Finish the branch before the final review loop is clean
 - Accept review findings that are not backed by inspected repo evidence
+- Update the inquiry record during review without explicit user confirmation

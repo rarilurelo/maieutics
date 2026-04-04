@@ -15,6 +15,7 @@
 ### Round 1
 
 **Reviewer Status:** [approved | needs-fix | needs-user-input]
+**Inquiry Record Confirmation Status:** [not-needed | pending | confirmed | declined]
 
 **Summary**
 [Short summary]
@@ -41,6 +42,16 @@
 
 **User Answers**
 - [Answer]
+
+**Pending Inquiry Record Updates**
+- Section: [Settled Decisions | Assumptions > Confirmed Assumptions | Assumptions > Working Assumptions | Assumptions > Invalidated Assumptions | Open Questions]
+  - Change Type: [append | replace | supersede | move]
+  - Related Issues: [I1]
+  - Rationale: [Why this update is being proposed]
+  - Draft Text: [Exact text awaiting user confirmation]
+
+**Confirmed Updates Applied**
+- [Exact inquiry record update applied after explicit user confirmation]
 
 **Implementation / Doc Fixes Applied**
 - [Fix]
