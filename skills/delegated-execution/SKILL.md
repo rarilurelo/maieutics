@@ -78,7 +78,7 @@ For each task:
 **IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
 
 ```bash
-RUN_ID=$(uuidgen) && codex exec --full-auto -o /tmp/maieutics-impl-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto --reasoning-effort high -o /tmp/maieutics-impl-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from implementer-prompt.md>
 PROMPT
 echo "OUTPUT_FILE=/tmp/maieutics-impl-${RUN_ID}.json"
@@ -98,7 +98,7 @@ Parse the output from the `-o` file, not from stdout (stdout contains progress l
 **IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
 
 ```bash
-RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-spec-review-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto --reasoning-effort high -s read-only -o /tmp/maieutics-spec-review-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from spec-reviewer-prompt.md>
 PROMPT
 echo "OUTPUT_FILE=/tmp/maieutics-spec-review-${RUN_ID}.json"
@@ -119,7 +119,7 @@ Parse the output from the `-o` file, not from stdout (stdout contains progress l
 **IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
 
 ```bash
-RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-quality-review-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto --reasoning-effort high -s read-only -o /tmp/maieutics-quality-review-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from code-quality-reviewer-prompt.md>
 PROMPT
 echo "OUTPUT_FILE=/tmp/maieutics-quality-review-${RUN_ID}.json"
@@ -165,7 +165,7 @@ After all plan tasks are complete:
 **IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
 
 ```bash
-RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-impl-review-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto --reasoning-effort high -s read-only -o /tmp/maieutics-impl-review-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from implementation-reviewer-prompt.md>
 PROMPT
 echo "OUTPUT_FILE=/tmp/maieutics-impl-review-${RUN_ID}.json"

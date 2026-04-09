@@ -84,7 +84,7 @@ Use `codex exec` so the main session stays focused. Codex reads files directly â
 **IMPORTANT: Run this command in the foreground (do NOT use `run_in_background`).** Foreground execution keeps `RUN_ID` in scope so you can read the correct output file immediately after completion.
 
 ```bash
-RUN_ID=$(uuidgen) && codex exec --full-auto -s read-only -o /tmp/maieutics-feedback-reconciliation-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto --reasoning-effort high -s read-only -o /tmp/maieutics-feedback-reconciliation-${RUN_ID}.json - <<'PROMPT'
 <substituted prompt content from feedback-reconciler-prompt.md>
 PROMPT
 echo "OUTPUT_FILE=/tmp/maieutics-feedback-reconciliation-${RUN_ID}.json"
