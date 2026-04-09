@@ -137,15 +137,14 @@ Parse the output from the `-o` file, not from stdout (stdout contains progress l
 
 ### Per-Task Review Loop Limit
 
-Per-task implementer/spec/code-quality fix loops are capped at **3 rounds per task**. A "round" is one implementer launch followed by its spec review and code quality review.
+Per-task implementer/spec/code-quality fix loops have **no hard round limit**. Instead, every **5 rounds**, pause and ask the user whether to continue:
 
-After 3 rounds with unresolved Critical or Important issues: stop and escalate to the user.
+- Present the current round number and any remaining unresolved issues
+- Ask: `レビューラウンド N 回に達しました。レビューを続行しますか？`
+- If the user approves, continue for up to 5 more rounds before the next checkpoint
+- If the user declines, stop and escalate remaining issues to the user for direction
 
-- Present the unresolved issues clearly
-- Ask the user for direction on each remaining issue
-- Record the answers and continue with a final implementer launch incorporating the user's decisions
-
-This mirrors the existing final lenses review loop limit and prevents infinite fix loops where each fix introduces new issues.
+A "round" is one implementer launch followed by its spec review and code quality review.
 
 ### Final Lenses Implementation Review
 
@@ -203,14 +202,18 @@ Do not treat answering a blocker question as implicit permission to update the i
 
 ### Review Loop Limit
 
-The final review loop runs **at most 3 rounds**. If Critical or Important issues remain after 3 rounds, stop self-fixing and escalate to the user:
+The final review loop has **no hard round limit**. Instead, every **5 rounds**, pause and ask the user whether to continue:
 
-- Present the unresolved issues clearly
-- Ask the user for direction on each remaining issue
-- Record the answers in the implementation review record
-- Draft inquiry record update candidates and ask for explicit confirmation before any inquiry record edit
-- Only after the inquiry record update batch is explicitly confirmed, apply the user's decisions and run one final review
-- If confirmation remains unresolved or declined, stop in a pending-confirmation state without re-running review
+- Present the current round number and any remaining unresolved Critical or Important issues
+- Ask: `レビューラウンド N 回に達しました。レビューを続行しますか？`
+- If the user approves, continue for up to 5 more rounds before the next checkpoint
+- If the user declines, escalate remaining issues to the user:
+  - Present the unresolved issues clearly
+  - Ask the user for direction on each remaining issue
+  - Record the answers in the implementation review record
+  - Draft inquiry record update candidates and ask for explicit confirmation before any inquiry record edit
+  - Only after the inquiry record update batch is explicitly confirmed, apply the user's decisions and run one final review
+  - If confirmation remains unresolved or declined, stop in a pending-confirmation state without re-running review
 
 This prevents infinite fix loops where each fix introduces new issues.
 
@@ -224,7 +227,7 @@ This prevents infinite fix loops where each fix introduces new issues.
 - Record any pending inquiry record changes in the implementation review record only
 - If the findings reveal a design/plan mismatch, update the design and/or plan first
 - Dispatch the implementation worker to fix the issues
-- Re-run the final lenses implementation review (respecting the 3-round limit)
+- Re-run the final lenses implementation review (respecting the 5-round checkpoint)
 
 **If status is `needs-user-input`:**
 - Ask the user all blocker questions in one grouped message

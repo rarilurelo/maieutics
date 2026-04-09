@@ -181,16 +181,18 @@ Do not treat answering a blocker question as implicit permission to update the i
 
 ### Review Loop Limit
 
-The review loop runs **at most 3 rounds**. If Critical or Important issues remain after 3 rounds, stop self-fixing and escalate to the user:
+The review loop has **no hard round limit**. Instead, every **5 rounds**, pause and ask the user whether to continue:
 
-- Present the unresolved issues clearly
-- Ask the user for direction on each remaining issue
-- Record the answers in the plan review record
-- Draft inquiry record update candidates and ask for explicit confirmation before any inquiry record edit
-- Only after the inquiry record update batch is explicitly confirmed, apply the user's decisions and run one final review
-- If confirmation remains unresolved or declined, stop in a pending-confirmation state without re-running review
-
-This prevents infinite fix loops where each fix introduces new issues.
+- Present the current round number and any remaining unresolved Critical or Important issues
+- Ask: `レビューラウンド N 回に達しました。レビューを続行しますか？`
+- If the user approves, continue for up to 5 more rounds before the next checkpoint
+- If the user declines, escalate remaining issues to the user:
+  - Present the unresolved issues clearly
+  - Ask the user for direction on each remaining issue
+  - Record the answers in the plan review record
+  - Draft inquiry record update candidates and ask for explicit confirmation before any inquiry record edit
+  - Only after the inquiry record update batch is explicitly confirmed, apply the user's decisions and run one final review
+  - If confirmation remains unresolved or declined, stop in a pending-confirmation state without re-running review
 
 ### Review Outcomes
 
@@ -201,7 +203,7 @@ This prevents infinite fix loops where each fix introduces new issues.
 - Fix the design and/or plan yourself
 - Record any pending inquiry record changes in the plan review record only
 - Append the review round to the review record
-- Re-run the external review (respecting the 3-round limit)
+- Re-run the external review (respecting the 5-round checkpoint)
 
 **If status is `needs-user-input`:**
 - Ask the user the grouped blocker questions
