@@ -5,7 +5,7 @@ Run this prompt via `codex exec`. Codex reads the referenced files directly from
 **Run in the foreground (do NOT use `run_in_background`):**
 
 ```bash
-RUN_ID=$(uuidgen) && codex exec --full-auto --reasoning-effort high -o /tmp/maieutics-impl-${RUN_ID}.json - <<'PROMPT'
+RUN_ID=$(uuidgen) && codex exec --full-auto -o /tmp/maieutics-impl-${RUN_ID}.json - <<'PROMPT'
 <paste the prompt below with [PLACEHOLDERS] substituted>
 PROMPT
 echo "OUTPUT_FILE=/tmp/maieutics-impl-${RUN_ID}.json"
